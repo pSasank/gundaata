@@ -1,0 +1,70 @@
+*{
+    box-sizing: border-box;
+}
+.header{
+    text-align: center;
+}
+body{
+    margin: 0px;
+    padding: 1vh;
+    background:#477548;
+    color: #fff;
+    text-align: center;
+}
+.bet-inputs{
+    width: 30%;
+    padding: 2vh;
+    display: inline-block;
+    text-align: center;
+    border: solid 1px #fff;
+}
+/*
+.bet-inputs input{
+    height: 20px;
+    width: 30px;
+} */
+.betIncrementer{
+    display: inline;
+    border: solid 1px #fff;
+}
+.buttons .btn{
+    width:49%;
+    padding: 1vh 10px;
+    margin: 3vh auto 0;
+}
+.bet-inputs label{
+    font-size: 20vh;
+    display: block;
+}
+.dice-container div{
+ width: 48%;
+ display: inline-block;
+ height: 8vh;
+ text-align: center;
+ margin: 5px;   
+ background-size: contain;
+ background-repeat: no-repeat;
+}
+.die1{
+    background-position: right;
+}
+/*
+.dice-container .die1{
+    background-image: url(./assets/dice_1.png)
+}
+.dice-container .die2{
+    background-image: url(./assets/dice_2.png)
+}
+.dice-container .die3{
+    background-image: url(./assets/dice_3.png)
+}
+.dice-container .die4{
+    background-image: url(./assets/dice_4.png)
+}
+.dice-container .die5{
+    background-image: url(./assets/dice_5.png)
+}
+.dice-container .die6{
+    background-image: url(./assets/dice_6.png)
+}
+*/

@@ -1,0 +1,76 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, 
+            user-scalable=no, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="stylesheet" href="./style.css">
+    <script src="./script.js"></script>
+</head>
+
+<body>
+    <h1 class="header">Gundaata!</h1>
+    <div class="newsreel">
+        <h2>Place your bets</h2>
+    </div>
+    <div class="pot">Cash Available:
+        <span class="userpot">1000</span>
+    </div>
+    <div class="bets-block">
+        <div class="bet-inputs">
+            <label for="1">1</label>
+            <input type="number" class="betValue_1" id="1"></input>
+            <div class="betIncrementer inc_10">+10</div>
+            <div class="betIncrementer inc_50">+50</div>
+            <div class="betIncrementer inc_100">+100</div>
+        </div>
+        <div class="bet-inputs">
+            <label for="2">2</label>
+            <input type="number" class="betValue_2" id="2"></input>
+            <div class="betIncrementer inc_10">+10</div>
+            <div class="betIncrementer inc_50">+50</div>
+            <div class="betIncrementer inc_100">+100</div>
+        </div>
+        <div class="bet-inputs">
+            <label for="3">3</label>
+            <input type="number" class="betValue_3" id="3"></input>
+            <div class="betIncrementer inc_10">+10</div>
+            <div class="betIncrementer inc_50">+50</div>
+            <div class="betIncrementer inc_100">+100</div>
+        </div>
+        <div class="bet-inputs">
+            <label for="4">4</label>
+            <input type="number" class="betValue_4" id="4"></input>
+            <div class="betIncrementer inc_10">+10</div>
+            <div class="betIncrementer inc_50">+50</div>
+            <div class="betIncrementer inc_100">+100</div>
+        </div>
+        <div class="bet-inputs">
+            <label for="5">5</label>
+            <input type="number" class="betValue_5" id="5"></input>
+            <div class="betIncrementer inc_10">+10</div>
+            <div class="betIncrementer inc_50">+50</div>
+            <div class="betIncrementer inc_100">+100</div>
+        </div>
+        <div class="bet-inputs">
+            <label for="6">6</label>
+            <input type="number" class="betValue_6" id="6"></input>
+            <div class="betIncrementer inc_10">+10</div>
+            <div class="betIncrementer inc_50">+50</div>
+            <div class="betIncrementer inc_100">+100</div>
+        </div>
+    </div>
+    <div class="dice-container">
+<div style="background-image: url(./assets/dice_1.png)" class="die1"></div>
+<div style="background-image: url(./assets/dice_1.png)" class="die2"></div>
+    </div>
+    <div class="buttons">
+        <button class="btn playGame" onclick="playGame();">Play Game!</button>
+        <button class="btn startOver" onclick="startOver();">Start Over!</button>
+    </div>
+</body>
+
+</html>
