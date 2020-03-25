@@ -14,53 +14,61 @@
 <body>
     <h1 class="header">Gundaata!</h1>
     <div class="newsreel">
-        <h2>Place your bets</h2>
+        <h3>Place your bets</h3>
     </div>
     <div class="pot">Cash Available:
         <span class="userpot">1000</span>
     </div>
+    <div class="score">High Score: <span class="highScore"></span></div>
     <div class="bets-block">
         <div class="bet-inputs">
             <label for="1">1</label>
-            <input type="number" class="betValue_1" id="1"></input>
-            <div class="betIncrementer inc_10">+10</div>
-            <div class="betIncrementer inc_50">+50</div>
-            <div class="betIncrementer inc_100">+100</div>
+            <input type="text" pattern="[0-9]*" class="betValue_1"></input>
+            <button class="betIncrementer" card="1" increment="10">+10</button>
+            <button class="betIncrementer" card="1" increment="50">+50</button>
+            <button class="betIncrementer" card="1" increment="100">+100</button>
+            <button class="betIncrementer" card="1" increment="500">+500</button>
         </div>
         <div class="bet-inputs">
             <label for="2">2</label>
-            <input type="number" class="betValue_2" id="2"></input>
-            <div class="betIncrementer inc_10">+10</div>
-            <div class="betIncrementer inc_50">+50</div>
-            <div class="betIncrementer inc_100">+100</div>
+            <input type="text" pattern="[0-9]*" class="betValue_2"></input>
+            <button class="betIncrementer" card="2" increment="10">+10</button>
+            <button class="betIncrementer" card="2" increment="50">+50</button>
+            <button class="betIncrementer" card="2" increment="100">+100</button>
+            <button class="betIncrementer" card="2" increment="500">+500</button>
         </div>
         <div class="bet-inputs">
             <label for="3">3</label>
-            <input type="number" class="betValue_3" id="3"></input>
-            <div class="betIncrementer inc_10">+10</div>
-            <div class="betIncrementer inc_50">+50</div>
-            <div class="betIncrementer inc_100">+100</div>
+            <input type="text" pattern="[0-9]*" class="betValue_3"></input>
+            <button class="betIncrementer" card="3" increment="10">+10</button>
+            <button class="betIncrementer" card="3" increment="50">+50</button>
+            <button class="betIncrementer" card="3" increment="100">+100</button>
+            <button class="betIncrementer" card="3" increment="500">+500</button>
         </div>
         <div class="bet-inputs">
             <label for="4">4</label>
-            <input type="number" class="betValue_4" id="4"></input>
-            <div class="betIncrementer inc_10">+10</div>
-            <div class="betIncrementer inc_50">+50</div>
-            <div class="betIncrementer inc_100">+100</div>
+            <input type="text" pattern="[0-9]*" class="betValue_4"></input>
+            <button class="betIncrementer" card="4" increment="10">+10</button>
+            <button class="betIncrementer" card="4" increment="50">+50</button>
+            <button class="betIncrementer" card="4" increment="100">+100</button>
+            <button class="betIncrementer" card="4" increment="500">+500</button>
         </div>
         <div class="bet-inputs">
             <label for="5">5</label>
-            <input type="number" class="betValue_5" id="5"></input>
-            <div class="betIncrementer inc_10">+10</div>
-            <div class="betIncrementer inc_50">+50</div>
-            <div class="betIncrementer inc_100">+100</div>
+            <input type="text" pattern="[0-9]*" class="betValue_5"></input>
+            <button class="betIncrementer" card="5" increment="10">+10</button>
+            <button class="betIncrementer" card="5" increment="50">+50</button>
+            <button class="betIncrementer" card="5" increment="100">+100</button>
+            <button class="betIncrementer" card="5" increment="500">+500</button>
+
         </div>
         <div class="bet-inputs">
             <label for="6">6</label>
-            <input type="number" class="betValue_6" id="6"></input>
-            <div class="betIncrementer inc_10">+10</div>
-            <div class="betIncrementer inc_50">+50</div>
-            <div class="betIncrementer inc_100">+100</div>
+            <input type="text" pattern="[0-9]*" class="betValue_6"></input>
+            <button class="betIncrementer" card="6" increment="10">+10</button>
+            <button class="betIncrementer" card="6" increment="50">+50</button>
+            <button class="betIncrementer" card="6" increment="100">+100</button>
+            <button class="betIncrementer" card="6" increment="500">+500</button>
         </div>
     </div>
     <div class="dice-container">
@@ -70,6 +78,13 @@
     <div class="buttons">
         <button class="btn playGame" onclick="playGame();">Play Game!</button>
         <button class="btn startOver" onclick="startOver();">Start Over!</button>
+    </div>
+    <div class="overlay">
+        <div class="overlay-content">
+            <h2>Game Over</h2>
+            <h3>High Score: <span class="highScore"></span></h3>
+            <button class="" onclick="startOver();hideOverlay();">Play Again!</button>
+        </div>
     </div>
 </body>
 
