@@ -24,8 +24,9 @@ body{
     width: 30px;
 } */
 .betIncrementer{
-    display: inline;
+    display: inline-block;
     border: solid 1px #fff;
+    cursor: pointer;
 }
 .buttons .btn{
     width:49%;
@@ -47,6 +48,12 @@ body{
 }
 .die1{
     background-position: right;
+}
+.bet-inputs input {
+    display: block;
+    width: 100%;
+
+    max-width: 100%;
 }
 /*
 .dice-container .die1{
