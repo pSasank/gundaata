@@ -96,3 +96,7 @@ body{
   .overlay-content h2, .overlay-content h3{
       color: #818181;
   }
+  .header-logo{
+      width: 100%;
+      max-width: 500px;
+  }
