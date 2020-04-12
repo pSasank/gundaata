@@ -3,6 +3,10 @@
 }
 .header{
     text-align: center;
+    margin-bottom: 5px;
+}
+.newsreel h3{
+    margin: 10px;
 }
 body{
     margin: 0px;
@@ -10,10 +14,13 @@ body{
     background:#477548;
     color: #fff;
     text-align: center;
+/*    height: 100%;
+    max-height:100%;
+    overflow: hidden; */
 }
 .bet-inputs{
     width: 30%;
-    padding: 2vh;
+    padding: 1vh 2vw;
     display: inline-block;
     text-align: center;
     border: solid 1px #fff;
@@ -27,6 +34,14 @@ body{
     display: inline-block;
     border: solid 1px #fff;
     cursor: pointer;
+    width: 38%;
+    padding: 1px;
+    margin: 3px;
+}
+@media(max-width:767px){
+    .betIncrementer{
+        font-size: 11px;
+    }
 }
 .buttons .btn{
     width:49%;
@@ -34,15 +49,15 @@ body{
     margin: 3vh auto 0;
 }
 .bet-inputs label{
-    font-size: 20vh;
+    font-size: 8vh;
     display: block;
 }
 .dice-container div{
- width: 48%;
+ width: 45%;
  display: inline-block;
  height: 8vh;
  text-align: center;
- margin: 5px;   
+ margin: 0.5%;   
  background-size: contain;
  background-repeat: no-repeat;
 }
@@ -52,7 +67,6 @@ body{
 .bet-inputs input {
     display: block;
     width: 100%;
-
     max-width: 100%;
 }
 /*
@@ -98,5 +112,14 @@ body{
   }
   .header-logo{
       width: 100%;
-      max-width: 500px;
+      max-width: 460px;
   }
+  @media(max-width:767px){
+      .header-logo{
+          max-width: 200px;
+      }
+  }
+  .score{
+      display: none;
+  }
+  
