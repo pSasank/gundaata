@@ -63,13 +63,13 @@ body{
  width: 45%;
  display: inline-block;
  height: 8vh;
- text-align: center;
+ text-align: left;
  margin: 0.5%;   
  background-size: contain;
  background-repeat: no-repeat;
 }
-.die1{
-    background-position: right;
+.dice-container div:nth-child(1){
+    text-align: right;
 }
 .bet-inputs input {
     display: block;
@@ -77,6 +77,10 @@ body{
     max-width: 100%;
     margin-bottom: 2px;
     border: solid 1px #fff;
+}
+.dice-container img{
+    max-width: 100%;
+    max-height: 100%;
 }
 /*
 .dice-container .die1{
@@ -131,4 +135,47 @@ body{
   .score, .newsreel{
       display: none;
   }
-  
+  /*
+.d1{
+    animation: rolling 0.1s 1;
+
+}
+.d2{
+    animation: rolling 0.1s 1;
+} 
+.d3{
+    animation: rolling 0.1s 1;
+}
+.d4{
+    animation: rolling 0.1s 1;
+}
+.d5{
+    animation: rolling 0.1s 1;
+}
+.d6{
+    animation: rolling 0.1s 1;
+}
+*/
+.dice-container img{
+    animation: rolling 0.1s 1;
+}
+.roller{
+    animation: rolling 0.1s infinite;
+}
+@-webkit-keyframes rolling {
+    from {
+      -ms-transform: rotate(0deg);
+      -moz-transform: rotate(0deg);
+      -webkit-transform: rotate(0deg);
+      -o-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    to {
+      -ms-transform: rotate(360deg);
+      -moz-transform: rotate(360deg);
+      -webkit-transform: rotate(360deg);
+      -o-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+    
+  }
