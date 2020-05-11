@@ -13,7 +13,10 @@ function playGame(){
     var totalBets = betsTotal(bets);
     userpot = userpot - totalBets;
     calculateWinnings(playDice(), bets);
-
+    gtag('event', 'play', {
+        'event_category': 'Game'
+      });
+      
 }
 function betsTotal(bets){
     return Object.values(bets).reduce((acc,cur)=>acc+cur); //combo of all bets;
