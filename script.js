@@ -48,6 +48,13 @@ function displayDiceGif(results){
         window.setTimeout(()=>{document.querySelector(".die2 .d"+results[1]).style.display = "inline-block";},100) 
     }
     });
+    playDiceSound();
+}
+function playDiceSound(){
+    var s = document.getElementById("diceSound");
+    s.pause(); //not playing when already in progress - clicked twice etc
+    s.currentTime = 0;
+    s.play();
 }
 function calculateWinnings(diceResults, bets){
     var dice1 = diceResults[0];
