@@ -16,6 +16,7 @@ function playGame(){
     gtag('event', 'play', {
         'event_category': 'Game'
       });
+      ga('rollTracker.send', 'S2Testing');
       
 }
 function betsTotal(bets){
