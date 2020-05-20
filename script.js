@@ -15,9 +15,7 @@ function playGame(){
     calculateWinnings(playDice(), bets);
     gtag('event', 'play', {
         'event_category': 'Game'
-      });
-      ga('rollTracker.send', 'S2Testing');
-      
+      }); 
 }
 function betsTotal(bets){
     return Object.values(bets).reduce((acc,cur)=>acc+cur); //combo of all bets;
