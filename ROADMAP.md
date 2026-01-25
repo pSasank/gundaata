@@ -3,6 +3,26 @@
 ## Overview
 Convert Gundaata from a web-based dice game to a polished Android app on Google Play Store with enhanced UI, new features, test coverage, and monetization through ads.
 
+**Development Philosophy: Test-Driven Development (TDD)**
+- Write tests FIRST, then implementation
+- Red → Green → Refactor cycle
+- No feature ships without tests
+- See [TESTING.md](./TESTING.md) for comprehensive test specifications
+
+---
+
+## Phase Order (TDD Approach)
+
+| Phase | Description | Priority |
+|-------|-------------|----------|
+| 1 | Platform & Architecture Setup | Foundation |
+| 2 | **Testing Infrastructure** | **FIRST** |
+| 3 | Core Game Logic (with tests) | Critical |
+| 4 | UI Components (with tests) | Critical |
+| 5 | New Features (with tests) | High |
+| 6 | Ad Integration (with tests) | High |
+| 7 | Play Store Preparation | Final |
+
 ---
 
 ## Phase 1: Platform & Architecture Setup
@@ -46,9 +66,52 @@ gundaata-mobile/
 
 ---
 
-## Phase 2: Core Game Migration
+## Phase 2: Testing Infrastructure (SET UP FIRST)
 
-### 2.1 Port Game Logic
+> **This phase runs BEFORE writing any feature code. See [TESTING.md](./TESTING.md) for complete test specifications.**
+
+### 2.1 Testing Stack Setup
+- [ ] Install Jest + React Native Testing Library
+- [ ] Install Detox or Maestro for E2E
+- [ ] Configure test runners in package.json
+- [ ] Set up test coverage thresholds (85% minimum)
+- [ ] Configure CI/CD pipeline (GitHub Actions)
+
+### 2.2 Write Core Logic Tests FIRST
+Before implementing any game logic, write tests for:
+- [ ] **Dice Module Tests** - rolling, validation, distribution
+- [ ] **Betting Module Tests** - validation, limits, edge cases
+- [ ] **Winnings Calculation Tests** - payouts, edge cases
+- [ ] **Game State Tests** - reducer, transitions, game over
+
+### 2.3 Write Component Tests FIRST
+Before building UI components, write tests for:
+- [ ] Dice component - rendering, animation states
+- [ ] BetInput component - validation, quick bets
+- [ ] GameOverModal - visibility, buttons, high score
+- [ ] CashDisplay - formatting, updates
+
+### 2.4 Test Coverage Requirements
+| Category | Minimum |
+|----------|---------|
+| Core Game Logic | 95% |
+| State Management | 90% |
+| Components | 85% |
+| Overall | 85% |
+
+### 2.5 CI/CD Pipeline
+- [ ] Automated tests on every PR
+- [ ] Block merge if tests fail
+- [ ] Coverage reports on PRs
+- [ ] E2E tests on main branch
+
+---
+
+## Phase 3: Core Game Migration (TDD)
+
+> Write failing tests → Implement → Refactor
+
+### 3.1 Port Game Logic
 - [ ] Extract pure game logic into separate utility functions
 - [ ] Implement dice rolling mechanics
 - [ ] Implement betting system
@@ -71,7 +134,7 @@ gundaata-mobile/
 
 ---
 
-## Phase 3: UI/UX Enhancements
+## Phase 4: UI/UX Enhancements
 
 ### 3.1 Visual Improvements
 - [ ] **Modern Design System**
@@ -119,7 +182,7 @@ gundaata-mobile/
 
 ---
 
-## Phase 4: New Features
+## Phase 5: New Features
 
 ### 4.1 Daily Rewards System
 - [ ] Daily login bonus (increasing streak rewards)
@@ -203,7 +266,7 @@ gundaata-mobile/
 
 ---
 
-## Phase 5: Ad Integration
+## Phase 6: Ad Integration
 
 ### 5.1 Ad Types & Placement
 
@@ -238,78 +301,9 @@ gundaata-mobile/
 
 ---
 
-## Phase 6: Testing Strategy
-
-### 6.1 Unit Tests
-```javascript
-// Example test cases for game logic
-
-describe('Dice Rolling', () => {
-  test('generates numbers between 1-6', () => {});
-  test('both dice are independent', () => {});
-  test('distribution is approximately uniform', () => {});
-});
-
-describe('Betting System', () => {
-  test('rejects bets exceeding available cash', () => {});
-  test('rejects negative bet amounts', () => {});
-  test('rejects non-integer bets', () => {});
-  test('allows valid bets on all numbers', () => {});
-  test('correctly sums total bet amount', () => {});
-});
-
-describe('Winnings Calculation', () => {
-  test('returns 2x bet when one die matches', () => {});
-  test('returns 4x bet when both dice match same number', () => {});
-  test('returns 0 when no dice match', () => {});
-  test('handles multiple winning bets correctly', () => {});
-  test('correctly updates cash after win', () => {});
-  test('correctly updates cash after loss', () => {});
-});
-
-describe('Game State', () => {
-  test('game over triggers when cash reaches 0', () => {});
-  test('high score updates when exceeded', () => {});
-  test('game resets correctly on new game', () => {});
-});
-```
-
-### 6.2 Integration Tests
-- [ ] Full game flow: bet → roll → result → cash update
-- [ ] Ad loading and display
-- [ ] Storage persistence across app restarts
-- [ ] Analytics event tracking
-- [ ] Leaderboard submission and retrieval
-
-### 6.3 UI/Component Tests
-- [ ] Dice displays correct face for each number
-- [ ] Bet inputs accept only valid values
-- [ ] Buttons are disabled during roll animation
-- [ ] Game over modal displays correctly
-- [ ] All screens render without crashes
-
-### 6.4 E2E Tests (Detox/Maestro)
-- [ ] Complete new user onboarding flow
-- [ ] Play 5 consecutive games
-- [ ] Watch rewarded ad and receive bonus
-- [ ] Achieve an achievement and see notification
-- [ ] Check leaderboard functionality
-
-### 6.5 Performance Testing
-- [ ] App startup time < 2 seconds
-- [ ] Animation frame rate stays at 60fps
-- [ ] Memory usage stays under 150MB
-- [ ] No memory leaks during extended play
-
-### 6.6 Testing Tools
-- Jest + React Native Testing Library (unit/component)
-- Detox or Maestro (E2E)
-- Flipper (debugging)
-- Firebase Test Lab (device testing)
-
----
-
 ## Phase 7: Play Store Preparation
+
+> **Testing is covered in Phase 2 and [TESTING.md](./TESTING.md)**
 
 ### 7.1 App Store Assets
 - [ ] App icon (512x512)
@@ -371,18 +365,21 @@ describe('Game State', () => {
 
 ---
 
-## Timeline Estimate
+## Timeline Estimate (TDD Approach)
 
-| Phase | Duration |
-|-------|----------|
-| Phase 1: Setup | Week 1 |
-| Phase 2: Core Migration | Week 2-3 |
-| Phase 3: UI Enhancements | Week 3-4 |
-| Phase 4: New Features | Week 4-6 |
-| Phase 5: Ad Integration | Week 6-7 |
-| Phase 6: Testing | Week 7-8 |
-| Phase 7: Play Store Prep | Week 8-9 |
-| **Total** | **~9 weeks** |
+| Phase | Description | Duration |
+|-------|-------------|----------|
+| Phase 1 | Platform & Architecture Setup | Week 1 |
+| Phase 2 | **Testing Infrastructure (FIRST)** | Week 1-2 |
+| Phase 3 | Core Game Migration (with tests) | Week 2-3 |
+| Phase 4 | UI Enhancements (with tests) | Week 3-4 |
+| Phase 5 | New Features (with tests) | Week 4-6 |
+| Phase 6 | Ad Integration (with tests) | Week 6-7 |
+| Phase 7 | Play Store Preparation | Week 7-8 |
+| Phase 8 | Post-Launch | Ongoing |
+| **Total to Launch** | | **~8 weeks** |
+
+> Testing happens THROUGHOUT, not at the end. Each feature is test-driven.
 
 ---
 
