@@ -132,3 +132,22 @@ src/
 **Total Tests:** 127 passing
 
 ---
+
+## Phase 6 - Ad Integration
+
+### Entry 12 - Phase 6.1-6.3 Complete - AdMob Integration
+**Action:** Integrated Google AdMob for rewarded ads
+**Tests:** 15 new tests (142 total)
+**Features:**
+- AdService with rewarded/interstitial ad support
+- Mock mode for development testing
+- useAds hook for React integration
+- Rewarded ad revival ($500 bonus on game over)
+**Files:**
+- `src/services/adService.ts`
+- `src/hooks/useAds.ts`
+- `src/__tests__/unit/adService.test.ts`
+- Updated `src/screens/GameScreen.tsx`
+- Updated `app.json` with AdMob plugin config
+
+---

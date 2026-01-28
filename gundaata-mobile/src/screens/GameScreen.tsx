@@ -3,7 +3,7 @@
  * Main game screen integrating all components
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useGameStore } from '../hooks/useGameStore';
+import { useAds } from '../hooks/useAds';
 import { Dice } from '../components/Dice';
 import { BetInput } from '../components/BetInput';
 import { CashDisplay } from '../components/CashDisplay';
@@ -23,6 +24,9 @@ import { rollDice as rollDiceLogic } from '../utils/dice';
 
 const DICE_NUMBERS: DiceNumber[] = [1, 2, 3, 4, 5, 6];
 const ROLL_ANIMATION_DURATION = 1000;
+
+// Set to true for development testing without real ads
+const USE_MOCK_ADS = __DEV__;
 
 export function GameScreen() {
   const {
@@ -43,8 +47,16 @@ export function GameScreen() {
     addCash,
   } = useGameStore();
 
+  // Ad integration
+  const {
+    isRewardedAdReady,
+    showRewardedAd,
+    revivalRewardAmount,
+  } = useAds({ mockMode: USE_MOCK_ADS });
+
   const [isAnimating, setIsAnimating] = useState(false);
   const [prevHighScore] = useState(highScore);
+  const gameOverCountRef = useRef(0);
 
   const handleRoll = useCallback(() => {
     if (!canRoll || isAnimating) return;
@@ -61,11 +73,12 @@ export function GameScreen() {
     }, ROLL_ANIMATION_DURATION);
   }, [canRoll, isAnimating, rollDice, setDiceResult]);
 
-  const handleWatchAd = useCallback(() => {
-    // TODO: Integrate actual ad SDK
-    // For now, simulate ad reward
-    addCash(500);
-  }, [addCash]);
+  const handleWatchAd = useCallback(async () => {
+    const reward = await showRewardedAd();
+    if (reward) {
+      addCash(reward.amount);
+    }
+  }, [showRewardedAd, addCash]);
 
   const isGameOver = status === 'gameOver';
   const isRolling = status === 'rolling' || isAnimating;
@@ -167,7 +180,7 @@ export function GameScreen() {
         isNewHighScore={highScore > prevHighScore}
         onNewGame={newGame}
         onWatchAd={handleWatchAd}
-        adAvailable={true} // TODO: Check actual ad availability
+        adAvailable={isRewardedAdReady}
       />
     </SafeAreaView>
   );
