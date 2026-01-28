@@ -119,3 +119,16 @@ src/
 ## Phase 2 Complete - Moving to Phase 3
 
 ---
+
+## Phase 3 - Core Game Migration (UI Components)
+
+### Entry 11 - Phase 3.1 Complete - useGameStore Hook
+**Action:** Created Zustand store hook connecting game state to React
+**Tests:** 20 tests
+- Initial state, actions, computed values
+**Files:**
+- `src/__tests__/unit/useGameStore.test.ts`
+- `src/hooks/useGameStore.ts`
+**Total Tests:** 127 passing
+
+---
