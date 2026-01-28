@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "gundaata-mobile",
+    "slug": "gundaata-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#477548"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.gundaata.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#477548"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.gundaata.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-3940256099942544~3347511713",
+          "iosAppId": "ca-app-pub-3940256099942544~1458002511"
+        }
+      ]
+    ]
+  }
+}
