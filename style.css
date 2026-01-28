@@ -1,8 +1,13 @@
 *{
     box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
 }
 .header{
     text-align: center;
+    margin-bottom: 5px;
+}
+.newsreel h3{
+    margin: 10px;
 }
 body{
     margin: 0px;
@@ -10,10 +15,13 @@ body{
     background:#477548;
     color: #fff;
     text-align: center;
+/*    height: 100%;
+    max-height:100%;
+    overflow: hidden; */
 }
 .bet-inputs{
     width: 30%;
-    padding: 2vh;
+    padding: 1vh 2vw;
     display: inline-block;
     text-align: center;
     border: solid 1px #fff;
@@ -27,6 +35,20 @@ body{
     display: inline-block;
     border: solid 1px #fff;
     cursor: pointer;
+    width: 49%;
+    padding: 1px;
+    margin: 1%;
+}
+.betIncrementer:nth-of-type(odd){
+    margin-left: 0px;
+}
+.betIncrementer:nth-of-type(even){
+    margin-right: 0px;
+}
+@media(max-width:767px){
+    .betIncrementer{
+        font-size: 11px;
+    }
 }
 .buttons .btn{
     width:49%;
@@ -34,26 +56,31 @@ body{
     margin: 3vh auto 0;
 }
 .bet-inputs label{
-    font-size: 20vh;
+    font-size: 8vh;
     display: block;
 }
 .dice-container div{
- width: 48%;
+ width: 45%;
  display: inline-block;
  height: 8vh;
- text-align: center;
- margin: 5px;   
+ text-align: left;
+ margin: 0.5%;   
  background-size: contain;
  background-repeat: no-repeat;
 }
-.die1{
-    background-position: right;
+.dice-container div:nth-child(1){
+    text-align: right;
 }
 .bet-inputs input {
     display: block;
     width: 100%;
-
     max-width: 100%;
+    margin-bottom: 2px;
+    border: solid 1px #fff;
+}
+.dice-container img{
+    max-width: 100%;
+    max-height: 100%;
 }
 /*
 .dice-container .die1{
@@ -95,4 +122,60 @@ body{
   }
   .overlay-content h2, .overlay-content h3{
       color: #818181;
+  }
+  .header-logo{
+      width: 100%;
+      max-width: 460px;
+  }
+  @media(max-width:767px){
+      .header-logo{
+          max-width: 200px;
+      }
+  }
+  .score, .newsreel{
+      display: none;
+  }
+  /*
+.d1{
+    animation: rolling 0.1s 1;
+
+}
+.d2{
+    animation: rolling 0.1s 1;
+} 
+.d3{
+    animation: rolling 0.1s 1;
+}
+.d4{
+    animation: rolling 0.1s 1;
+}
+.d5{
+    animation: rolling 0.1s 1;
+}
+.d6{
+    animation: rolling 0.1s 1;
+}
+*/
+.dice-container img{
+    animation: rolling 0.1s 1;
+}
+.roller{
+    animation: rolling 0.1s infinite;
+}
+@-webkit-keyframes rolling {
+    from {
+      -ms-transform: rotate(0deg);
+      -moz-transform: rotate(0deg);
+      -webkit-transform: rotate(0deg);
+      -o-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    to {
+      -ms-transform: rotate(360deg);
+      -moz-transform: rotate(360deg);
+      -webkit-transform: rotate(360deg);
+      -o-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+    
   }

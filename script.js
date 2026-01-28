@@ -13,7 +13,9 @@ function playGame(){
     var totalBets = betsTotal(bets);
     userpot = userpot - totalBets;
     calculateWinnings(playDice(), bets);
-
+    gtag('event', 'play', {
+        'event_category': 'Game'
+      }); 
 }
 function betsTotal(bets){
     return Object.values(bets).reduce((acc,cur)=>acc+cur); //combo of all bets;
@@ -29,13 +31,29 @@ function playDice(){
     return results;
 }
 function displayDiceGif(results){
+    console.log(results);
+/*
     document.querySelector('.newsReel').innerHTML = `<h3>Dice Values are ${results[0]}, ${results[1]}</h3>`;
-  /*  document.querySelectorAll(".dice-container div").forEach(function(el,ind){
-       // el.className="die"+results[ind];
+    document.querySelectorAll(".dice-container div").forEach(function(el,ind){
+        el.className="die"+results[ind];
     }); */
-    document.querySelector(".die1").style.backgroundImage = "url('./assets/dice_" + results[0] +".png')";
-    document.querySelector(".die2").style.backgroundImage = "url('./assets/dice_" + results[1] +".png')";
-
+    document.querySelectorAll(".die1 img").forEach(i=>{
+        if(i.style.display!="none"){i.style.display ="none";
+  window.setTimeout(()=>{document.querySelector(".die1 .d"+results[0]).style.display = "inline-block";},100) //for animation effect. not happening for same dice values if not delayed.
+    }
+    });
+    document.querySelectorAll(".die2 img").forEach(i=>{
+        if(i.style.display!="none"){ i.style.display ="none";
+        window.setTimeout(()=>{document.querySelector(".die2 .d"+results[1]).style.display = "inline-block";},100) 
+    }
+    });
+    playDiceSound();
+}
+function playDiceSound(){
+    var s = document.getElementById("diceSound");
+    s.pause(); //not playing when already in progress - clicked twice etc
+    s.currentTime = 0;
+    s.play();
 }
 function calculateWinnings(diceResults, bets){
     var dice1 = diceResults[0];
