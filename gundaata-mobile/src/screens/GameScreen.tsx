@@ -1,7 +1,7 @@
 /**
  * GameScreen
  * Main game screen with authentic gundaata board layout.
- * Top-down view of the betting board with dice in the center.
+ * Inspired by real gundaata arenas — vibrant colors, festive patterns.
  */
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
@@ -23,6 +23,39 @@ import { rollDice as rollDiceLogic } from '../utils/dice';
 const ROLL_ANIMATION_DURATION = 1000;
 const USE_MOCK_ADS = __DEV__;
 
+/** Decorative corner ornament for the background */
+function CornerOrnament({ position }: { position: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' }) {
+  const isTop = position.includes('top');
+  const isLeft = position.includes('Left');
+  return (
+    <View style={[
+      ornamentStyles.corner,
+      isTop ? { top: 0 } : { bottom: 0 },
+      isLeft ? { left: 0 } : { right: 0 },
+    ]}>
+      <View style={[ornamentStyles.arc, {
+        borderTopLeftRadius: isTop && isLeft ? 40 : 0,
+        borderTopRightRadius: isTop && !isLeft ? 40 : 0,
+        borderBottomLeftRadius: !isTop && isLeft ? 40 : 0,
+        borderBottomRightRadius: !isTop && !isLeft ? 40 : 0,
+      }]}>
+        <View style={ornamentStyles.arcInner} />
+      </View>
+    </View>
+  );
+}
+
+/** Decorative side accent stripe */
+function SideAccent({ side }: { side: 'left' | 'right' }) {
+  return (
+    <View style={[accentStyles.container, side === 'left' ? { left: 0 } : { right: 0 }]}>
+      <View style={accentStyles.stripe1} />
+      <View style={accentStyles.stripe2} />
+      <View style={accentStyles.stripe3} />
+    </View>
+  );
+}
+
 export function GameScreen() {
   const {
     cash,
@@ -43,12 +76,10 @@ export function GameScreen() {
     loadSavedState,
   } = useGameStore();
 
-  // Load persisted high score on mount
   useEffect(() => {
     loadSavedState();
   }, []);
 
-  // Ad integration
   const {
     isRewardedAdReady,
     showRewardedAd,
@@ -60,10 +91,8 @@ export function GameScreen() {
 
   const handleRoll = useCallback(() => {
     if (!canRoll || isAnimating) return;
-
     rollDice();
     setIsAnimating(true);
-
     setTimeout(() => {
       const result = rollDiceLogic();
       setDiceResult(result);
@@ -91,9 +120,21 @@ export function GameScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
 
-      {/* Header: Title + Cash + High Score */}
+      {/* Background decorations */}
+      <CornerOrnament position="topLeft" />
+      <CornerOrnament position="topRight" />
+      <CornerOrnament position="bottomLeft" />
+      <CornerOrnament position="bottomRight" />
+      <SideAccent side="left" />
+      <SideAccent side="right" />
+
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Gundaata</Text>
+        <View style={styles.titleContainer}>
+          <View style={styles.titleAccentLeft} />
+          <Text style={styles.title}>GUNDAATA</Text>
+          <View style={styles.titleAccentRight} />
+        </View>
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>CASH</Text>
@@ -105,7 +146,7 @@ export function GameScreen() {
             </View>
           )}
           <View style={styles.statItem}>
-            <Text style={styles.statLabel}>HIGH</Text>
+            <Text style={styles.statLabel}>HIGH SCORE</Text>
             <Text style={styles.highValue}>${highScore.toLocaleString()}</Text>
           </View>
         </View>
@@ -150,48 +191,123 @@ export function GameScreen() {
   );
 }
 
+const ornamentStyles = StyleSheet.create({
+  corner: {
+    position: 'absolute',
+    width: 40,
+    height: 40,
+    zIndex: 0,
+  },
+  arc: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#E65100',
+    justifyContent: 'center',
+    alignItems: 'center',
+    opacity: 0.6,
+  },
+  arcInner: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#FF8F00',
+    opacity: 0.8,
+  },
+});
+
+const accentStyles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    top: '30%',
+    width: 5,
+    height: '40%',
+    zIndex: 0,
+  },
+  stripe1: {
+    flex: 1,
+    backgroundColor: '#E65100',
+    opacity: 0.4,
+    marginBottom: 2,
+  },
+  stripe2: {
+    flex: 1,
+    backgroundColor: '#FFB300',
+    opacity: 0.3,
+    marginBottom: 2,
+  },
+  stripe3: {
+    flex: 1,
+    backgroundColor: '#AB47BC',
+    opacity: 0.3,
+  },
+});
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#3E2723', // Dark brown — like a wooden table
+    backgroundColor: '#4A148C', // Deep purple — festive arena base
   },
   header: {
     paddingTop: 12,
     paddingHorizontal: 16,
     paddingBottom: 8,
+    zIndex: 1,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  titleAccentLeft: {
+    width: 30,
+    height: 3,
+    backgroundColor: '#FFB300',
+    marginRight: 10,
+    borderRadius: 2,
+  },
+  titleAccentRight: {
+    width: 30,
+    height: 3,
+    backgroundColor: '#FFB300',
+    marginLeft: 10,
+    borderRadius: 2,
   },
   title: {
     color: '#FFD54F',
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '900',
     textAlign: 'center',
-    letterSpacing: 2,
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    letterSpacing: 4,
+    textShadowColor: '#E65100',
     textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-    marginBottom: 8,
+    textShadowRadius: 6,
   },
   statsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.25)',
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
   },
   statItem: {
     alignItems: 'center',
   },
   statLabel: {
-    color: '#A1887F',
-    fontSize: 11,
+    color: '#CE93D8',
+    fontSize: 10,
     fontWeight: '700',
     letterSpacing: 1,
   },
   cashValue: {
-    color: '#66BB6A',
+    color: '#69F0AE',
     fontSize: 22,
     fontWeight: 'bold',
   },
   highValue: {
-    color: '#FFD700',
+    color: '#FFD740',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -211,10 +327,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 12,
     paddingVertical: 8,
+    zIndex: 1,
   },
   bottomArea: {
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: 'rgba(0, 0, 0, 0.35)',
     paddingBottom: 8,
+    zIndex: 1,
   },
 });
 

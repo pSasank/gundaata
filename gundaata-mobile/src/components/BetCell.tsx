@@ -17,14 +17,14 @@ interface BetCellProps {
   onPress: (diceNumber: DiceNumber) => void;
 }
 
-// Bold colors for each number — inspired by painted board
-const NUMBER_COLORS: Record<number, string> = {
-  1: '#E53935', // Red
-  2: '#1E88E5', // Blue
-  3: '#43A047', // Green
-  4: '#FB8C00', // Orange
-  5: '#8E24AA', // Purple
-  6: '#00ACC1', // Teal
+// Bold colors for each number — inspired by painted gundaata boards
+const NUMBER_COLORS: Record<number, { text: string; bg: string }> = {
+  1: { text: '#FFFFFF', bg: '#D32F2F' },   // Red
+  2: { text: '#FFFFFF', bg: '#1565C0' },   // Blue
+  3: { text: '#FFFFFF', bg: '#2E7D32' },   // Green
+  4: { text: '#FFFFFF', bg: '#E65100' },   // Orange
+  5: { text: '#FFFFFF', bg: '#6A1B9A' },   // Purple
+  6: { text: '#FFFFFF', bg: '#00838F' },   // Teal
 };
 
 export function BetCell({
@@ -38,6 +38,7 @@ export function BetCell({
     <TouchableOpacity
       style={[
         styles.cell,
+        { backgroundColor: NUMBER_COLORS[diceNumber].bg },
         isWinningNumber && styles.winningCell,
         disabled && styles.disabledCell,
       ]}
@@ -51,7 +52,7 @@ export function BetCell({
       <Text
         style={[
           styles.number,
-          { color: NUMBER_COLORS[diceNumber] },
+          { color: NUMBER_COLORS[diceNumber].text },
           isWinningNumber && styles.winningNumber,
         ]}
       >
@@ -74,17 +75,20 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5E6C8',
     borderWidth: 2,
-    borderColor: '#8B7355',
+    borderColor: 'rgba(255,255,255,0.3)',
     margin: 2,
-    borderRadius: 4,
+    borderRadius: 6,
     position: 'relative',
   },
   winningCell: {
-    backgroundColor: '#FFF9C4',
-    borderColor: '#FFD700',
+    borderColor: '#FFD740',
     borderWidth: 3,
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 10,
   },
   disabledCell: {
     opacity: 0.6,
@@ -92,34 +96,36 @@ const styles = StyleSheet.create({
   number: {
     fontSize: 48,
     fontWeight: '900',
-    textShadowColor: 'rgba(0,0,0,0.15)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+    textShadowColor: 'rgba(0,0,0,0.4)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
   },
   winningNumber: {
-    textShadowColor: '#FFD700',
-    textShadowRadius: 8,
+    textShadowColor: '#FFD740',
+    textShadowRadius: 12,
   },
   betBadge: {
     position: 'absolute',
-    bottom: 6,
-    right: 6,
-    backgroundColor: '#2E7D32',
+    bottom: 5,
+    right: 5,
+    backgroundColor: '#FFD740',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 10,
     minWidth: 36,
     alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: 'rgba(0,0,0,0.2)',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 5,
   },
   betText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: 'bold',
+    color: '#1B1B1B',
+    fontSize: 13,
+    fontWeight: '900',
   },
 });
 
