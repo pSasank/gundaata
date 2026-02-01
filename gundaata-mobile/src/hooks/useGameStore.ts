@@ -8,6 +8,7 @@ import { create } from 'zustand';
 import { Bets, DiceNumber, calculateTotalBet, createEmptyBets } from '../utils/betting';
 import { DiceRoll } from '../utils/dice';
 import { gameReducer, createInitialState, GameState, GameStatus } from '../state/gameState';
+import { storageService } from '../services/storage';
 
 interface GameStore extends GameState {
   // Actions
@@ -19,6 +20,7 @@ interface GameStore extends GameState {
   newGame: () => void;
   addCash: (amount: number) => void;
   resetStore: () => void;
+  loadSavedState: () => Promise<void>;
 
   // Computed (derived from state)
   readonly totalBet: number;
@@ -68,6 +70,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
   setDiceResult: (dice) => {
     set(state => {
       const newState = gameReducer(state, { type: 'DICE_RESULT', payload: dice });
+      // Persist high score if it changed
+      if (newState.highScore > state.highScore) {
+        storageService.saveHighScore(newState.highScore);
+      }
       return { ...newState, ...computeValues(newState) };
     });
   },
@@ -89,5 +95,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
   resetStore: () => {
     const initial = createInitialState();
     set({ ...initial, ...computeValues(initial) });
+  },
+
+  loadSavedState: async () => {
+    const highScore = await storageService.loadHighScore();
+    if (highScore > 0) {
+      set(state => ({
+        ...state,
+        highScore,
+      }));
+    }
   },
 }));

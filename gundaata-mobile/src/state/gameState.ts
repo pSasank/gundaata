@@ -16,6 +16,7 @@ export interface GameState {
   status: GameStatus;
   highScore: number;
   lastWin: number;
+  isNewHighScore: boolean;
   error?: string;
 }
 
@@ -47,6 +48,7 @@ export function createInitialState(options: InitialStateOptions = {}): GameState
     status: 'idle',
     highScore: savedHighScore,
     lastWin: 0,
+    isNewHighScore: false,
   };
 }
 
@@ -111,6 +113,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         cash: newCash,
         lastWin: result.totalWinnings,
         highScore: newHighScore,
+        isNewHighScore: newHighScore > state.highScore,
         bets: createEmptyBets(),
         status: isOver ? 'gameOver' : 'idle',
       };

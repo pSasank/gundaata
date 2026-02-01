@@ -56,6 +56,11 @@ describe('Game State Module', () => {
       const state = createInitialState();
       expect(state.lastWin).toBe(0);
     });
+
+    test('initializes isNewHighScore to false', () => {
+      const state = createInitialState();
+      expect(state.isNewHighScore).toBe(false);
+    });
   });
 
   describe('gameReducer - PLACE_BET', () => {
@@ -224,6 +229,21 @@ describe('Game State Module', () => {
       expect(newState.highScore).toBe(1600);
     });
 
+    test('sets isNewHighScore to true when high score is beaten', () => {
+      const state = createInitialState();
+      state.highScore = 1000;
+      state.cash = 1400;
+      state.bets[3] = 100;
+      state.status = 'rolling';
+
+      const newState = gameReducer(state, {
+        type: 'DICE_RESULT',
+        payload: { die1: 3, die2: 5 },
+      });
+
+      expect(newState.isNewHighScore).toBe(true);
+    });
+
     test('does not update high score if cash is lower', () => {
       const state = createInitialState();
       state.highScore = 5000;
@@ -237,6 +257,21 @@ describe('Game State Module', () => {
       });
 
       expect(newState.highScore).toBe(5000);
+    });
+
+    test('sets isNewHighScore to false when high score is not beaten', () => {
+      const state = createInitialState();
+      state.highScore = 5000;
+      state.cash = 900;
+      state.bets[1] = 100;
+      state.status = 'rolling';
+
+      const newState = gameReducer(state, {
+        type: 'DICE_RESULT',
+        payload: { die1: 3, die2: 5 },
+      });
+
+      expect(newState.isNewHighScore).toBe(false);
     });
 
     test('triggers game over when cash reaches zero', () => {
@@ -339,6 +374,14 @@ describe('Game State Module', () => {
 
       const newState = gameReducer(state, { type: 'NEW_GAME' });
       expect(newState.error).toBeUndefined();
+    });
+
+    test('resets isNewHighScore to false', () => {
+      const state = createInitialState();
+      state.isNewHighScore = true;
+
+      const newState = gameReducer(state, { type: 'NEW_GAME' });
+      expect(newState.isNewHighScore).toBe(false);
     });
   });
 

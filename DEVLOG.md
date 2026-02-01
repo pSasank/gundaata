@@ -163,4 +163,68 @@ src/
 **Files Modified:**
 - `src/services/adService.ts` - Rewrote with lazy loading pattern
 
+### Entry 14 - Bugfix: "New High Score" always showing on game over
+**Action:** Fixed false "New High Score" display on every game over
+**Root Cause:** `GameScreen.tsx` used `useState(highScore)` to capture initial high score at mount time (always 0). Since any game produces a high score > 0, the comparison was always true.
+**Fix:** Added `isNewHighScore` boolean to `GameState` interface:
+- Set to `true` in `DICE_RESULT` only when `newHighScore > state.highScore`
+- Reset to `false` on `NEW_GAME`
+- `GameScreen` reads it directly from the store instead of comparing via `useState`
+**Tests:** 4 new tests added (146 total, all passing)
+**Files Modified:**
+- `src/state/gameState.ts` - Added `isNewHighScore` field + logic in reducer
+- `src/__tests__/unit/gameState.test.ts` - 4 new tests
+- `src/screens/GameScreen.tsx` - Use `isNewHighScore` from store, removed broken `useState`
+
+### Entry 15 - Phase 3.3: AsyncStorage Persistence
+**Action:** Created storage service for persisting high score across app restarts
+**Tests:** 18 new tests (164 total, all passing)
+**Features:**
+- `storageService` wrapping AsyncStorage with error handling
+- `saveHighScore` / `loadHighScore` for high score persistence
+- `saveGameState` / `loadGameState` for full state persistence
+- `clearGameState` / `clearAll` for data management
+- Graceful fallbacks: returns 0/null on errors or corrupted data
+- `useGameStore.loadSavedState()` loads persisted high score on app start
+- High score auto-saved on every new record
+**Files:**
+- `src/services/storage.ts` - New storage service
+- `src/__tests__/unit/storage.test.ts` - 18 tests
+- `src/hooks/useGameStore.ts` - Integrated storage save/load
+- `src/screens/GameScreen.tsx` - Calls `loadSavedState()` on mount
+
+### Entry 16 - Roadmap Update
+**Action:** Added two user-requested items to ROADMAP.md:
+- Phase 4.0: Real Gundaata Environment UI Revamp (authentic board layout, dice tray, coin visuals)
+- Documented as future enhancement
+
+### Entry 17 - Phase 4.0: Gundaata Board UI Revamp
+**Action:** Complete UI redesign based on real gundaata board reference photo
+**Layout:** Top-down view of an authentic gundaata board:
+- 3x3 grid: Numbers 1-3 (top row), Dice area (center), Numbers 4-6 (bottom row)
+- Center cell acts as dice display and Roll button
+- Side cells on middle row are empty board space (like the real board)
+**New Components:**
+- `BetCell` - Numbered board cell with bold colored numbers, bet amount badge
+- `DiceArea` - Center dice display that doubles as the Roll button
+- `ChipSelector` - Casino-style chip buttons (10/50/100/500) + Clear
+- `BettingBoard` - 3x3 grid assembling the board layout
+**Interaction:** Select a chip amount at bottom, tap a number on the board to place that bet
+**Visual Design:**
+- Dark brown wooden table background (#3E2723)
+- Warm parchment/cloth cell backgrounds (#F5E6C8)
+- Brown board borders resembling painted wood (#5D4037, #8B7355)
+- Bold colored numbers (red, blue, green, orange, purple, teal)
+- Green bet badges on cells with active bets
+- Gold accent for winning cells and high score
+- Compact header with cash + high score inline
+**Files Created:**
+- `src/components/BetCell.tsx`
+- `src/components/DiceArea.tsx`
+- `src/components/ChipSelector.tsx`
+- `src/components/BettingBoard.tsx`
+**Files Modified:**
+- `src/screens/GameScreen.tsx` - Complete rewrite with board layout
+**Tests:** 164 passing (no regressions, all logic unchanged)
+
 ---

@@ -136,7 +136,15 @@ Before building UI components, write tests for:
 
 ## Phase 4: UI/UX Enhancements
 
-### 3.1 Visual Improvements
+### 4.0 Real Gundaata Environment UI Revamp
+- [ ] **Authentic Gundaata board layout** — replicate the real physical game's betting board
+- [ ] **Traditional dice tray** — visual area where dice are thrown, styled after the real game
+- [ ] **Bet placement areas** matching the real gundaata mat (numbered sections, coin stacks)
+- [ ] **Dealer/house feel** — simulate the street-game atmosphere with appropriate colors, textures
+- [ ] **Coin-based visuals** — show actual coin stacks instead of plain numbers for bets
+- [ ] **Reference images** — gather real gundaata game photos for design accuracy
+
+### 4.1 Visual Improvements
 - [ ] **Modern Design System**
   - Gradient backgrounds (casino feel)
   - Glassmorphism cards for betting sections
