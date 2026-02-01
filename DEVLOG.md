@@ -150,4 +150,17 @@ src/
 - Updated `src/screens/GameScreen.tsx`
 - Updated `app.json` with AdMob plugin config
 
+### Entry 13 - Bugfix: Expo Go Crash (RNGoogleMobileAdsModule not found)
+**Action:** Fixed runtime crash in Expo Go caused by top-level import of `react-native-google-mobile-ads`
+**Root Cause:** The native AdMob module is only available in development builds (not Expo Go). A top-level `import` statement caused the app to crash immediately on launch.
+**Fix:** Rewrote `adService.ts` to use lazy loading via `try { require() } catch`:
+- Native module is loaded lazily at module initialization
+- If load fails (Expo Go), `nativeModuleAvailable` is set to false
+- Constructor auto-enables mock mode when native module is unavailable
+- All ad unit IDs gracefully fall back to mock IDs
+- All existing functionality preserved for development builds
+**Tests:** 142 passing (all green, no regressions)
+**Files Modified:**
+- `src/services/adService.ts` - Rewrote with lazy loading pattern
+
 ---
