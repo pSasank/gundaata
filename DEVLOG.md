@@ -198,4 +198,33 @@ src/
 - Phase 4.0: Real Gundaata Environment UI Revamp (authentic board layout, dice tray, coin visuals)
 - Documented as future enhancement
 
+### Entry 17 - Phase 4.0: Gundaata Board UI Revamp
+**Action:** Complete UI redesign based on real gundaata board reference photo
+**Layout:** Top-down view of an authentic gundaata board:
+- 3x3 grid: Numbers 1-3 (top row), Dice area (center), Numbers 4-6 (bottom row)
+- Center cell acts as dice display and Roll button
+- Side cells on middle row are empty board space (like the real board)
+**New Components:**
+- `BetCell` - Numbered board cell with bold colored numbers, bet amount badge
+- `DiceArea` - Center dice display that doubles as the Roll button
+- `ChipSelector` - Casino-style chip buttons (10/50/100/500) + Clear
+- `BettingBoard` - 3x3 grid assembling the board layout
+**Interaction:** Select a chip amount at bottom, tap a number on the board to place that bet
+**Visual Design:**
+- Dark brown wooden table background (#3E2723)
+- Warm parchment/cloth cell backgrounds (#F5E6C8)
+- Brown board borders resembling painted wood (#5D4037, #8B7355)
+- Bold colored numbers (red, blue, green, orange, purple, teal)
+- Green bet badges on cells with active bets
+- Gold accent for winning cells and high score
+- Compact header with cash + high score inline
+**Files Created:**
+- `src/components/BetCell.tsx`
+- `src/components/DiceArea.tsx`
+- `src/components/ChipSelector.tsx`
+- `src/components/BettingBoard.tsx`
+**Files Modified:**
+- `src/screens/GameScreen.tsx` - Complete rewrite with board layout
+**Tests:** 164 passing (no regressions, all logic unchanged)
+
 ---

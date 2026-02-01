@@ -1,31 +1,26 @@
 /**
  * GameScreen
- * Main game screen integrating all components
+ * Main game screen with authentic gundaata board layout.
+ * Top-down view of the betting board with dice in the center.
  */
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
   SafeAreaView,
-  ScrollView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useGameStore } from '../hooks/useGameStore';
 import { useAds } from '../hooks/useAds';
-import { Dice } from '../components/Dice';
-import { BetInput } from '../components/BetInput';
-import { CashDisplay } from '../components/CashDisplay';
+import { BettingBoard } from '../components/BettingBoard';
+import { ChipSelector } from '../components/ChipSelector';
 import { GameOverModal } from '../components/GameOverModal';
 import { DiceNumber } from '../utils/betting';
 import { rollDice as rollDiceLogic } from '../utils/dice';
 
-const DICE_NUMBERS: DiceNumber[] = [1, 2, 3, 4, 5, 6];
 const ROLL_ANIMATION_DURATION = 1000;
-
-// Set to true for development testing without real ads
 const USE_MOCK_ADS = __DEV__;
 
 export function GameScreen() {
@@ -39,7 +34,6 @@ export function GameScreen() {
     isNewHighScore,
     totalBet,
     canRoll,
-    placeBet,
     incrementBet,
     clearBets,
     rollDice,
@@ -58,26 +52,29 @@ export function GameScreen() {
   const {
     isRewardedAdReady,
     showRewardedAd,
-    revivalRewardAmount,
   } = useAds({ mockMode: USE_MOCK_ADS });
 
   const [isAnimating, setIsAnimating] = useState(false);
+  const [selectedChip, setSelectedChip] = useState(50);
   const gameOverCountRef = useRef(0);
 
   const handleRoll = useCallback(() => {
     if (!canRoll || isAnimating) return;
 
-    // Start roll
     rollDice();
     setIsAnimating(true);
 
-    // Animate for duration, then set result
     setTimeout(() => {
       const result = rollDiceLogic();
       setDiceResult(result);
       setIsAnimating(false);
     }, ROLL_ANIMATION_DURATION);
   }, [canRoll, isAnimating, rollDice, setDiceResult]);
+
+  const handleCellPress = useCallback((diceNumber: DiceNumber) => {
+    if (isAnimating) return;
+    incrementBet(diceNumber, selectedChip);
+  }, [isAnimating, selectedChip, incrementBet]);
 
   const handleWatchAd = useCallback(async () => {
     const reward = await showRewardedAd();
@@ -90,93 +87,54 @@ export function GameScreen() {
   const isRolling = status === 'rolling' || isAnimating;
   const winningNumbers = dice ? [dice.die1, dice.die2] : [];
 
-  // Calculate available cash for bets (cash minus already placed bets)
-  const availableForBets = cash + totalBet; // During betting phase, cash hasn't been deducted yet
-
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
 
-      {/* Header */}
+      {/* Header: Title + Cash + High Score */}
       <View style={styles.header}>
-        <Text style={styles.title}>Gundaata!</Text>
-      </View>
-
-      {/* Cash Display */}
-      <CashDisplay cash={cash} lastWin={lastWin} highScore={highScore} />
-
-      {/* Dice Area */}
-      <View style={styles.diceArea}>
-        <Dice
-          value={dice?.die1 ?? null}
-          isRolling={isRolling}
-          isWinner={dice ? bets[dice.die1 as DiceNumber] > 0 : false}
-        />
-        <View style={styles.diceSpacer} />
-        <Dice
-          value={dice?.die2 ?? null}
-          isRolling={isRolling}
-          isWinner={dice ? bets[dice.die2 as DiceNumber] > 0 : false}
-        />
-      </View>
-
-      {/* Status Message */}
-      <View style={styles.statusContainer}>
-        <Text style={styles.statusText}>
-          {isRolling
-            ? 'Rolling...'
-            : dice
-            ? lastWin > 0
-              ? `Won $${lastWin.toLocaleString()}!`
-              : 'No luck this time'
-            : 'Place your bets!'}
-        </Text>
-      </View>
-
-      {/* Betting Area */}
-      <ScrollView style={styles.bettingArea} contentContainerStyle={styles.bettingContent}>
-        {DICE_NUMBERS.map(num => (
-          <BetInput
-            key={num}
-            diceNumber={num}
-            value={bets[num]}
-            maxBet={availableForBets - (totalBet - bets[num])}
-            disabled={isRolling}
-            onBetChange={placeBet}
-            onIncrement={incrementBet}
-          />
-        ))}
-      </ScrollView>
-
-      {/* Action Buttons */}
-      <View style={styles.actions}>
-        {/* Total bet display */}
-        <View style={styles.totalBetContainer}>
-          <Text style={styles.totalBetLabel}>Total Bet:</Text>
-          <Text style={styles.totalBetValue}>${totalBet.toLocaleString()}</Text>
+        <Text style={styles.title}>Gundaata</Text>
+        <View style={styles.statsRow}>
+          <View style={styles.statItem}>
+            <Text style={styles.statLabel}>CASH</Text>
+            <Text style={styles.cashValue}>${cash.toLocaleString()}</Text>
+          </View>
+          {lastWin > 0 && (
+            <View style={styles.winBadge}>
+              <Text style={styles.winText}>+${lastWin.toLocaleString()}</Text>
+            </View>
+          )}
+          <View style={styles.statItem}>
+            <Text style={styles.statLabel}>HIGH</Text>
+            <Text style={styles.highValue}>${highScore.toLocaleString()}</Text>
+          </View>
         </View>
+      </View>
 
-        <View style={styles.buttonRow}>
-          {/* Clear button */}
-          <TouchableOpacity
-            style={[styles.clearButton, (isRolling || totalBet === 0) && styles.buttonDisabled]}
-            onPress={clearBets}
-            disabled={isRolling || totalBet === 0}
-          >
-            <Text style={styles.clearButtonText}>Clear</Text>
-          </TouchableOpacity>
+      {/* The Board */}
+      <View style={styles.boardContainer}>
+        <BettingBoard
+          bets={bets}
+          dice={dice}
+          isRolling={isRolling}
+          canRoll={canRoll && !isAnimating}
+          lastWin={lastWin}
+          winningNumbers={winningNumbers}
+          disabled={isRolling}
+          onCellPress={handleCellPress}
+          onRoll={handleRoll}
+        />
+      </View>
 
-          {/* Roll button */}
-          <TouchableOpacity
-            style={[styles.rollButton, !canRoll && styles.buttonDisabled]}
-            onPress={handleRoll}
-            disabled={!canRoll || isAnimating}
-          >
-            <Text style={styles.rollButtonText}>
-              {isRolling ? '🎲 Rolling...' : '🎲 Roll Dice'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+      {/* Chip Selector */}
+      <View style={styles.bottomArea}>
+        <ChipSelector
+          selectedChip={selectedChip}
+          onSelectChip={setSelectedChip}
+          onClear={clearBets}
+          disabled={isRolling}
+          totalBet={totalBet}
+        />
       </View>
 
       {/* Game Over Modal */}
@@ -195,96 +153,68 @@ export function GameScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#477548', // Casino green
+    backgroundColor: '#3E2723', // Dark brown — like a wooden table
   },
   header: {
-    paddingVertical: 16,
-    alignItems: 'center',
+    paddingTop: 12,
+    paddingHorizontal: 16,
+    paddingBottom: 8,
   },
   title: {
-    color: '#FFFFFF',
-    fontSize: 32,
-    fontWeight: 'bold',
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    color: '#FFD54F',
+    fontSize: 28,
+    fontWeight: '900',
+    textAlign: 'center',
+    letterSpacing: 2,
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
+    marginBottom: 8,
   },
-  diceArea: {
+  statsRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 24,
   },
-  diceSpacer: {
-    width: 24,
-  },
-  statusContainer: {
+  statItem: {
     alignItems: 'center',
-    paddingVertical: 8,
   },
-  statusText: {
-    color: '#FFFFFF',
-    fontSize: 18,
+  statLabel: {
+    color: '#A1887F',
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
+  cashValue: {
+    color: '#66BB6A',
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  highValue: {
+    color: '#FFD700',
+    fontSize: 16,
     fontWeight: '600',
   },
-  bettingArea: {
-    flex: 1,
-    paddingHorizontal: 16,
+  winBadge: {
+    backgroundColor: '#2E7D32',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
   },
-  bettingContent: {
-    paddingBottom: 16,
-  },
-  actions: {
-    padding: 16,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-  },
-  totalBetContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  totalBetLabel: {
+  winText: {
     color: '#FFFFFF',
     fontSize: 16,
-    marginRight: 8,
-  },
-  totalBetValue: {
-    color: '#FFD700',
-    fontSize: 20,
     fontWeight: 'bold',
   },
-  buttonRow: {
-    flexDirection: 'row',
-  },
-  clearButton: {
+  boardContainer: {
     flex: 1,
-    backgroundColor: '#666',
-    paddingVertical: 16,
-    borderRadius: 12,
-    marginRight: 8,
-    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
-  clearButtonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  rollButton: {
-    flex: 2,
-    backgroundColor: '#1E40AF',
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  rollButtonText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  buttonDisabled: {
-    backgroundColor: '#333',
-    opacity: 0.6,
+  bottomArea: {
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    paddingBottom: 8,
   },
 });
 
