@@ -3,7 +3,7 @@
  * Main game screen integrating all components
  */
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -36,6 +36,7 @@ export function GameScreen() {
     status,
     highScore,
     lastWin,
+    isNewHighScore,
     totalBet,
     canRoll,
     placeBet,
@@ -45,7 +46,13 @@ export function GameScreen() {
     setDiceResult,
     newGame,
     addCash,
+    loadSavedState,
   } = useGameStore();
+
+  // Load persisted high score on mount
+  useEffect(() => {
+    loadSavedState();
+  }, []);
 
   // Ad integration
   const {
@@ -55,7 +62,6 @@ export function GameScreen() {
   } = useAds({ mockMode: USE_MOCK_ADS });
 
   const [isAnimating, setIsAnimating] = useState(false);
-  const [prevHighScore] = useState(highScore);
   const gameOverCountRef = useRef(0);
 
   const handleRoll = useCallback(() => {
@@ -177,7 +183,7 @@ export function GameScreen() {
       <GameOverModal
         visible={isGameOver}
         highScore={highScore}
-        isNewHighScore={highScore > prevHighScore}
+        isNewHighScore={isNewHighScore}
         onNewGame={newGame}
         onWatchAd={handleWatchAd}
         adAvailable={isRewardedAdReady}

@@ -163,4 +163,39 @@ src/
 **Files Modified:**
 - `src/services/adService.ts` - Rewrote with lazy loading pattern
 
+### Entry 14 - Bugfix: "New High Score" always showing on game over
+**Action:** Fixed false "New High Score" display on every game over
+**Root Cause:** `GameScreen.tsx` used `useState(highScore)` to capture initial high score at mount time (always 0). Since any game produces a high score > 0, the comparison was always true.
+**Fix:** Added `isNewHighScore` boolean to `GameState` interface:
+- Set to `true` in `DICE_RESULT` only when `newHighScore > state.highScore`
+- Reset to `false` on `NEW_GAME`
+- `GameScreen` reads it directly from the store instead of comparing via `useState`
+**Tests:** 4 new tests added (146 total, all passing)
+**Files Modified:**
+- `src/state/gameState.ts` - Added `isNewHighScore` field + logic in reducer
+- `src/__tests__/unit/gameState.test.ts` - 4 new tests
+- `src/screens/GameScreen.tsx` - Use `isNewHighScore` from store, removed broken `useState`
+
+### Entry 15 - Phase 3.3: AsyncStorage Persistence
+**Action:** Created storage service for persisting high score across app restarts
+**Tests:** 18 new tests (164 total, all passing)
+**Features:**
+- `storageService` wrapping AsyncStorage with error handling
+- `saveHighScore` / `loadHighScore` for high score persistence
+- `saveGameState` / `loadGameState` for full state persistence
+- `clearGameState` / `clearAll` for data management
+- Graceful fallbacks: returns 0/null on errors or corrupted data
+- `useGameStore.loadSavedState()` loads persisted high score on app start
+- High score auto-saved on every new record
+**Files:**
+- `src/services/storage.ts` - New storage service
+- `src/__tests__/unit/storage.test.ts` - 18 tests
+- `src/hooks/useGameStore.ts` - Integrated storage save/load
+- `src/screens/GameScreen.tsx` - Calls `loadSavedState()` on mount
+
+### Entry 16 - Roadmap Update
+**Action:** Added two user-requested items to ROADMAP.md:
+- Phase 4.0: Real Gundaata Environment UI Revamp (authentic board layout, dice tray, coin visuals)
+- Documented as future enhancement
+
 ---
