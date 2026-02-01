@@ -1,22 +1,35 @@
 /**
  * Ad Service
- * Handles AdMob integration for rewarded and interstitial ads
+ * Handles AdMob integration for rewarded and interstitial ads.
+ * Gracefully falls back to mock mode when native module is unavailable
+ * (e.g., running in Expo Go instead of a development build).
  */
 
-import {
-  RewardedAd,
-  InterstitialAd,
-  AdEventType,
-  RewardedAdEventType,
-  TestIds,
-} from 'react-native-google-mobile-ads';
+// Lazy-loaded native module references
+let RNAdMob: typeof import('react-native-google-mobile-ads') | null = null;
+let nativeModuleAvailable = false;
 
-// Use test IDs for development, replace with real IDs for production
-export const AD_UNIT_IDS = {
-  BANNER: TestIds.BANNER,
-  INTERSTITIAL: TestIds.INTERSTITIAL,
-  REWARDED: TestIds.REWARDED,
-};
+// Try to load the native module - will fail in Expo Go
+try {
+  RNAdMob = require('react-native-google-mobile-ads');
+  nativeModuleAvailable = true;
+} catch (e) {
+  console.warn('AdService: Native ad module not available (Expo Go?). Using mock mode.');
+  nativeModuleAvailable = false;
+}
+
+// Ad unit IDs - test IDs for development
+export const AD_UNIT_IDS = nativeModuleAvailable
+  ? {
+      BANNER: RNAdMob!.TestIds.BANNER,
+      INTERSTITIAL: RNAdMob!.TestIds.INTERSTITIAL,
+      REWARDED: RNAdMob!.TestIds.REWARDED,
+    }
+  : {
+      BANNER: 'mock-banner-id',
+      INTERSTITIAL: 'mock-interstitial-id',
+      REWARDED: 'mock-rewarded-id',
+    };
 
 export interface AdReward {
   type: 'revival';
@@ -24,8 +37,8 @@ export interface AdReward {
 }
 
 export class AdService {
-  private rewardedAd: ReturnType<typeof RewardedAd.createForAdRequest> | null = null;
-  private interstitialAd: ReturnType<typeof InterstitialAd.createForAdRequest> | null = null;
+  private rewardedAd: any = null;
+  private interstitialAd: any = null;
   private rewardedAdLoaded = false;
   private interstitialAdLoaded = false;
   private mockMode = false;
@@ -34,17 +47,24 @@ export class AdService {
   public readonly REVIVAL_REWARD_AMOUNT = 500;
 
   constructor() {
-    this.initializeAds();
+    // Auto-enable mock mode if native module isn't available
+    if (!nativeModuleAvailable) {
+      this.mockMode = true;
+    } else {
+      this.initializeAds();
+    }
   }
 
   private initializeAds() {
+    if (!RNAdMob) return;
+
     try {
-      // Initialize rewarded ad
+      const { RewardedAd, InterstitialAd } = RNAdMob;
+
       this.rewardedAd = RewardedAd.createForAdRequest(AD_UNIT_IDS.REWARDED, {
         requestNonPersonalizedAdsOnly: true,
       });
 
-      // Initialize interstitial ad
       this.interstitialAd = InterstitialAd.createForAdRequest(AD_UNIT_IDS.INTERSTITIAL, {
         requestNonPersonalizedAdsOnly: true,
       });
@@ -52,44 +72,47 @@ export class AdService {
       this.setupRewardedAdListeners();
       this.setupInterstitialAdListeners();
     } catch (error) {
-      console.warn('AdService: Failed to initialize ads', error);
+      console.warn('AdService: Failed to initialize ads, using mock mode', error);
+      this.mockMode = true;
     }
   }
 
   private setupRewardedAdListeners() {
-    if (!this.rewardedAd) return;
+    if (!this.rewardedAd || !RNAdMob) return;
+
+    const { RewardedAdEventType, AdEventType } = RNAdMob;
 
     this.rewardedAd.addAdEventListener(RewardedAdEventType.LOADED, () => {
       this.rewardedAdLoaded = true;
     });
 
-    this.rewardedAd.addAdEventListener(AdEventType.ERROR, (error) => {
+    this.rewardedAd.addAdEventListener(AdEventType.ERROR, (error: any) => {
       console.warn('Rewarded ad error:', error);
       this.rewardedAdLoaded = false;
     });
 
     this.rewardedAd.addAdEventListener(AdEventType.CLOSED, () => {
       this.rewardedAdLoaded = false;
-      // Preload next ad
       this.loadRewardedAd();
     });
   }
 
   private setupInterstitialAdListeners() {
-    if (!this.interstitialAd) return;
+    if (!this.interstitialAd || !RNAdMob) return;
+
+    const { AdEventType } = RNAdMob;
 
     this.interstitialAd.addAdEventListener(AdEventType.LOADED, () => {
       this.interstitialAdLoaded = true;
     });
 
-    this.interstitialAd.addAdEventListener(AdEventType.ERROR, (error) => {
+    this.interstitialAd.addAdEventListener(AdEventType.ERROR, (error: any) => {
       console.warn('Interstitial ad error:', error);
       this.interstitialAdLoaded = false;
     });
 
     this.interstitialAd.addAdEventListener(AdEventType.CLOSED, () => {
       this.interstitialAdLoaded = false;
-      // Preload next ad
       this.loadInterstitialAd();
     });
   }
@@ -97,7 +120,7 @@ export class AdService {
   // ============ Rewarded Ads ============
 
   async loadRewardedAd(): Promise<void> {
-    if (this.mockMode) return Promise.resolve();
+    if (this.mockMode) return;
 
     try {
       await this.rewardedAd?.load();
@@ -112,7 +135,6 @@ export class AdService {
   }
 
   async showRewardedAd(): Promise<AdReward | null> {
-    // Mock mode for testing without real ads
     if (this.mockMode) {
       return {
         type: 'revival',
@@ -120,14 +142,15 @@ export class AdService {
       };
     }
 
-    if (!this.rewardedAdLoaded || !this.rewardedAd) {
+    if (!this.rewardedAdLoaded || !this.rewardedAd || !RNAdMob) {
       return null;
     }
+
+    const { RewardedAdEventType, AdEventType } = RNAdMob;
 
     return new Promise((resolve) => {
       let rewarded = false;
 
-      // Listen for reward earned
       const rewardListener = this.rewardedAd!.addAdEventListener(
         RewardedAdEventType.EARNED_REWARD,
         () => {
@@ -135,7 +158,6 @@ export class AdService {
         }
       );
 
-      // Listen for ad closed
       const closeListener = this.rewardedAd!.addAdEventListener(
         AdEventType.CLOSED,
         () => {
@@ -143,17 +165,13 @@ export class AdService {
           closeListener();
 
           if (rewarded) {
-            resolve({
-              type: 'revival',
-              amount: this.REVIVAL_REWARD_AMOUNT,
-            });
+            resolve({ type: 'revival', amount: this.REVIVAL_REWARD_AMOUNT });
           } else {
             resolve(null);
           }
         }
       );
 
-      // Show the ad
       this.rewardedAd!.show();
     });
   }
@@ -161,7 +179,7 @@ export class AdService {
   // ============ Interstitial Ads ============
 
   async loadInterstitialAd(): Promise<void> {
-    if (this.mockMode) return Promise.resolve();
+    if (this.mockMode) return;
 
     try {
       await this.interstitialAd?.load();
@@ -176,11 +194,13 @@ export class AdService {
   }
 
   async showInterstitialAd(): Promise<void> {
-    if (this.mockMode) return Promise.resolve();
+    if (this.mockMode) return;
 
-    if (!this.interstitialAdLoaded || !this.interstitialAd) {
+    if (!this.interstitialAdLoaded || !this.interstitialAd || !RNAdMob) {
       return;
     }
+
+    const { AdEventType } = RNAdMob;
 
     return new Promise((resolve) => {
       const closeListener = this.interstitialAd!.addAdEventListener(
@@ -197,10 +217,6 @@ export class AdService {
 
   // ============ Game Over Logic ============
 
-  /**
-   * Determines if interstitial should show based on game over count
-   * Shows every 3rd game over to avoid being too aggressive
-   */
   shouldShowInterstitial(gameOverCount: number): boolean {
     return gameOverCount > 0 && gameOverCount % 3 === 0;
   }
@@ -213,6 +229,10 @@ export class AdService {
 
   isMockMode(): boolean {
     return this.mockMode;
+  }
+
+  isNativeModuleAvailable(): boolean {
+    return nativeModuleAvailable;
   }
 }
 
