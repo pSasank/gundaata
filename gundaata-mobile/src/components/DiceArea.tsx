@@ -1,21 +1,19 @@
 /**
  * DiceArea Component
- * Center area of the gundaata board.
- * Shows a decorative motif before first roll, dice after rolling.
- * Tapping rolls the dice.
+ * Center display area of the gundaata board.
+ * Shows a decorative rangoli motif before first roll, dice after rolling.
+ * Display only — the Roll button is now separate.
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Dice } from './Dice';
 import { DiceRoll } from '../utils/dice';
 
 interface DiceAreaProps {
   dice: DiceRoll | null;
   isRolling: boolean;
-  canRoll: boolean;
   lastWin: number;
-  onRoll: () => void;
 }
 
 function RangoliMotif() {
@@ -27,12 +25,11 @@ function RangoliMotif() {
         <View style={motifStyles.middleRing}>
           {/* Inner ring */}
           <View style={motifStyles.innerRing}>
-            {/* Center dot */}
             <View style={motifStyles.centerDot} />
           </View>
         </View>
       </View>
-      {/* Petal decorations - 4 petals */}
+      {/* Cardinal petals */}
       <View style={[motifStyles.petal, motifStyles.petalTop]} />
       <View style={[motifStyles.petal, motifStyles.petalBottom]} />
       <View style={[motifStyles.petal, motifStyles.petalLeft]} />
@@ -46,102 +43,88 @@ function RangoliMotif() {
   );
 }
 
-export function DiceArea({ dice, isRolling, canRoll, lastWin, onRoll }: DiceAreaProps) {
+export function DiceArea({ dice, isRolling, lastWin }: DiceAreaProps) {
   const hasDice = dice !== null;
 
   return (
-    <TouchableOpacity
-      style={[styles.container, canRoll && styles.canRoll]}
-      onPress={onRoll}
-      disabled={!canRoll}
-      activeOpacity={0.8}
-      accessibilityLabel={isRolling ? 'Dice rolling' : canRoll ? 'Tap to roll dice' : 'Place bets first'}
-      testID="dice-area"
-    >
+    <View style={styles.container} testID="dice-area">
       {hasDice ? (
-        // Show dice after roll
-        <View style={styles.diceRow}>
-          <Dice value={dice.die1} isRolling={isRolling} size={52} />
-          <View style={styles.diceSpacer} />
-          <Dice value={dice.die2} isRolling={isRolling} size={52} />
-        </View>
+        <>
+          <View style={styles.diceRow}>
+            <Dice value={dice.die1} isRolling={isRolling} size={50} />
+            <View style={styles.diceSpacer} />
+            <Dice value={dice.die2} isRolling={isRolling} size={50} />
+          </View>
+          {!isRolling && (
+            <Text style={[styles.resultText, lastWin > 0 ? styles.winText : styles.loseText]}>
+              {lastWin > 0 ? `+$${lastWin.toLocaleString()}` : 'No luck'}
+            </Text>
+          )}
+          {isRolling && <Text style={styles.rollingText}>Rolling...</Text>}
+        </>
       ) : (
-        // Show decorative motif before first roll
         <RangoliMotif />
       )}
-
-      {/* Status text */}
-      <Text style={[styles.statusText, hasDice && lastWin > 0 && styles.winText]}>
-        {isRolling
-          ? 'Rolling...'
-          : hasDice
-            ? lastWin > 0
-              ? `Won $${lastWin.toLocaleString()}!`
-              : 'No luck'
-            : canRoll
-              ? 'Tap to Roll!'
-              : 'Place bets'}
-      </Text>
-    </TouchableOpacity>
+    </View>
   );
 }
 
 const motifStyles = StyleSheet.create({
   container: {
-    width: 70,
-    height: 70,
+    width: 80,
+    height: 80,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
   },
   outerRing: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    borderWidth: 2.5,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 3,
     borderColor: '#E65100',
     justifyContent: 'center',
     alignItems: 'center',
   },
   middleRing: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    borderWidth: 2,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 2.5,
     borderColor: '#FFB300',
     justifyContent: 'center',
     alignItems: 'center',
   },
   innerRing: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     backgroundColor: '#C62828',
     justifyContent: 'center',
     alignItems: 'center',
   },
   centerDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: '#FFD54F',
   },
   petal: {
     position: 'absolute',
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
     backgroundColor: '#FF6F00',
   },
-  petalTop: { top: 2, left: '50%', marginLeft: -5 },
-  petalBottom: { bottom: 2, left: '50%', marginLeft: -5 },
-  petalLeft: { left: 2, top: '50%', marginTop: -5 },
-  petalRight: { right: 2, top: '50%', marginTop: -5 },
+  petalTop: { top: 0, left: '50%', marginLeft: -6 },
+  petalBottom: { bottom: 0, left: '50%', marginLeft: -6 },
+  petalLeft: { left: 0, top: '50%', marginTop: -6 },
+  petalRight: { right: 0, top: '50%', marginTop: -6 },
   smallPetal: {
     position: 'absolute',
-    width: 7,
-    height: 7,
-    borderRadius: 3.5,
+    width: 9,
+    height: 9,
+    borderRadius: 4.5,
     backgroundColor: '#AB47BC',
   },
   petalTopLeft: { top: 8, left: 8 },
@@ -160,12 +143,8 @@ const styles = StyleSheet.create({
     borderColor: '#BF360C',
     margin: 2,
     borderRadius: 4,
-    paddingVertical: 4,
-  },
-  canRoll: {
-    backgroundColor: '#FFF8E1',
-    borderColor: '#E65100',
-    borderWidth: 2.5,
+    paddingVertical: 6,
+    minHeight: 80,
   },
   diceRow: {
     flexDirection: 'row',
@@ -176,14 +155,21 @@ const styles = StyleSheet.create({
   diceSpacer: {
     width: 10,
   },
-  statusText: {
-    color: '#BF360C',
-    fontSize: 13,
-    fontWeight: '700',
+  resultText: {
+    fontSize: 14,
+    fontWeight: '800',
     textAlign: 'center',
   },
   winText: {
     color: '#2E7D32',
+  },
+  loseText: {
+    color: '#C62828',
+  },
+  rollingText: {
+    color: '#BF360C',
+    fontSize: 13,
+    fontWeight: '700',
   },
 });
 

@@ -72,7 +72,6 @@ export function BetCell({
 const styles = StyleSheet.create({
   cell: {
     flex: 1,
-    aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
@@ -80,6 +79,7 @@ const styles = StyleSheet.create({
     margin: 2,
     borderRadius: 6,
     position: 'relative',
+    minHeight: 80,
   },
   winningCell: {
     borderColor: '#FFD740',

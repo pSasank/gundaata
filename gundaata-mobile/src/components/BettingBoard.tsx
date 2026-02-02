@@ -1,11 +1,10 @@
 /**
  * BettingBoard Component
  * The main gundaata board layout with decorative frame.
- * Inspired by real gundaata boards — colorful, ornate, festive.
  *
  * Layout:
  *   Row 1: Numbers 1, 2, 3
- *   Row 2: (decorated), Dice Area, (decorated)
+ *   Row 2: (decorated), Dice Area (display only), (decorated)
  *   Row 3: Numbers 4, 5, 6
  */
 
@@ -20,23 +19,19 @@ interface BettingBoardProps {
   bets: Bets;
   dice: DiceRoll | null;
   isRolling: boolean;
-  canRoll: boolean;
   lastWin: number;
   winningNumbers: number[];
   disabled: boolean;
   onCellPress: (diceNumber: DiceNumber) => void;
-  onRoll: () => void;
 }
 
 /** Decorative corner piece for the side cells */
 function DecorativeCell() {
   return (
     <View style={decoStyles.cell}>
-      {/* Diamond pattern */}
       <View style={decoStyles.diamond}>
         <View style={decoStyles.diamondInner} />
       </View>
-      {/* Corner dots */}
       <View style={[decoStyles.cornerDot, decoStyles.topLeft]} />
       <View style={[decoStyles.cornerDot, decoStyles.topRight]} />
       <View style={[decoStyles.cornerDot, decoStyles.bottomLeft]} />
@@ -49,12 +44,10 @@ export function BettingBoard({
   bets,
   dice,
   isRolling,
-  canRoll,
   lastWin,
   winningNumbers,
   disabled,
   onCellPress,
-  onRoll,
 }: BettingBoardProps) {
   const renderCell = (num: DiceNumber) => (
     <BetCell
@@ -69,7 +62,6 @@ export function BettingBoard({
 
   return (
     <View style={styles.outerFrame}>
-      {/* Colorful border stripes — like the arena photo */}
       <View style={styles.stripeOrange} />
       <View style={styles.stripeRed} />
 
@@ -81,15 +73,13 @@ export function BettingBoard({
           {renderCell(3)}
         </View>
 
-        {/* Row 2: Decorated, Dice, Decorated */}
+        {/* Row 2: Decorated, Dice display, Decorated */}
         <View style={styles.row}>
           <DecorativeCell />
           <DiceArea
             dice={dice}
             isRolling={isRolling}
-            canRoll={canRoll}
             lastWin={lastWin}
-            onRoll={onRoll}
           />
           <DecorativeCell />
         </View>
@@ -102,7 +92,6 @@ export function BettingBoard({
         </View>
       </View>
 
-      {/* Bottom stripes */}
       <View style={styles.stripeRed} />
       <View style={styles.stripeOrange} />
     </View>
@@ -121,6 +110,7 @@ const decoStyles = StyleSheet.create({
     borderRadius: 4,
     position: 'relative',
     overflow: 'hidden',
+    minHeight: 80,
   },
   diamond: {
     width: 30,

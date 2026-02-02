@@ -1,7 +1,7 @@
 /**
  * ChipSelector Component
- * Row of betting chips at the bottom of the screen.
- * Player selects a chip amount, then taps a number on the board to bet.
+ * Bottom bar with chip denomination buttons, instructional text,
+ * and the prominent Roll Dice button.
  */
 
 import React from 'react';
@@ -11,29 +11,44 @@ interface ChipSelectorProps {
   selectedChip: number;
   onSelectChip: (amount: number) => void;
   onClear: () => void;
+  onRoll: () => void;
+  canRoll: boolean;
+  isRolling: boolean;
   disabled: boolean;
   totalBet: number;
 }
 
 const CHIP_VALUES = [10, 50, 100, 500];
 
-const CHIP_COLORS: Record<number, { bg: string; border: string }> = {
-  10: { bg: '#FFFFFF', border: '#9E9E9E' },
-  50: { bg: '#2196F3', border: '#1565C0' },
-  100: { bg: '#4CAF50', border: '#2E7D32' },
-  500: { bg: '#F44336', border: '#C62828' },
+const CHIP_COLORS: Record<number, { bg: string; border: string; text: string }> = {
+  10: { bg: '#ECEFF1', border: '#90A4AE', text: '#37474F' },
+  50: { bg: '#1E88E5', border: '#0D47A1', text: '#FFFFFF' },
+  100: { bg: '#43A047', border: '#1B5E20', text: '#FFFFFF' },
+  500: { bg: '#E53935', border: '#B71C1C', text: '#FFFFFF' },
 };
 
 export function ChipSelector({
   selectedChip,
   onSelectChip,
   onClear,
+  onRoll,
+  canRoll,
+  isRolling,
   disabled,
   totalBet,
 }: ChipSelectorProps) {
   return (
     <View style={styles.container}>
-      {/* Chip buttons */}
+      {/* Instructional text */}
+      <Text style={styles.instruction}>
+        {isRolling
+          ? 'Rolling the dice...'
+          : totalBet > 0
+            ? `Total bet: $${totalBet.toLocaleString()} — tap numbers to add more`
+            : `Tap a number on the board to bet $${selectedChip}`}
+      </Text>
+
+      {/* Chip row */}
       <View style={styles.chipsRow}>
         {CHIP_VALUES.map(value => {
           const isSelected = selectedChip === value;
@@ -45,6 +60,7 @@ export function ChipSelector({
                 styles.chip,
                 { backgroundColor: colors.bg, borderColor: colors.border },
                 isSelected && styles.chipSelected,
+                isSelected && { borderColor: '#FFD740' },
                 disabled && styles.chipDisabled,
               ]}
               onPress={() => onSelectChip(value)}
@@ -55,7 +71,7 @@ export function ChipSelector({
               <Text
                 style={[
                   styles.chipText,
-                  value === 10 && styles.chipTextDark,
+                  { color: colors.text },
                   isSelected && styles.chipTextSelected,
                 ]}
               >
@@ -77,13 +93,19 @@ export function ChipSelector({
         </TouchableOpacity>
       </View>
 
-      {/* Total bet display */}
-      {totalBet > 0 && (
-        <View style={styles.totalRow}>
-          <Text style={styles.totalLabel}>Total Bet:</Text>
-          <Text style={styles.totalValue}>${totalBet.toLocaleString()}</Text>
-        </View>
-      )}
+      {/* Roll Dice button — the primary CTA */}
+      <TouchableOpacity
+        style={[styles.rollButton, !canRoll && styles.rollButtonDisabled]}
+        onPress={onRoll}
+        disabled={!canRoll}
+        activeOpacity={0.8}
+        accessibilityLabel={isRolling ? 'Dice rolling' : 'Roll the dice'}
+        testID="roll-button"
+      >
+        <Text style={[styles.rollButtonText, !canRoll && styles.rollButtonTextDisabled]}>
+          {isRolling ? 'ROLLING...' : 'ROLL DICE'}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -91,17 +113,26 @@ export function ChipSelector({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingTop: 10,
+    paddingBottom: 6,
+  },
+  instruction: {
+    color: '#CE93D8',
+    fontSize: 13,
+    textAlign: 'center',
+    marginBottom: 10,
+    fontWeight: '600',
   },
   chipsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 12,
   },
   chip: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     borderWidth: 3,
     justifyContent: 'center',
     alignItems: 'center',
@@ -113,24 +144,22 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   chipSelected: {
-    transform: [{ scale: 1.15 }],
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
-    elevation: 8,
+    transform: [{ scale: 1.2 }],
+    borderWidth: 4,
+    shadowOpacity: 0.6,
+    shadowRadius: 8,
+    elevation: 10,
   },
   chipDisabled: {
     opacity: 0.4,
   },
   chipText: {
-    color: '#FFFFFF',
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: 'bold',
   },
-  chipTextDark: {
-    color: '#333333',
-  },
   chipTextSelected: {
-    fontSize: 17,
+    fontSize: 15,
+    fontWeight: '900',
   },
   clearButton: {
     paddingHorizontal: 14,
@@ -141,24 +170,36 @@ const styles = StyleSheet.create({
   },
   clearText: {
     color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  totalRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 6,
-  },
-  totalLabel: {
-    color: '#D7CCC8',
     fontSize: 13,
-    marginRight: 6,
-  },
-  totalValue: {
-    color: '#FFD700',
-    fontSize: 16,
     fontWeight: 'bold',
+  },
+  rollButton: {
+    backgroundColor: '#2E7D32',
+    paddingVertical: 16,
+    borderRadius: 14,
+    alignItems: 'center',
+    shadowColor: '#1B5E20',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 8,
+    borderWidth: 2,
+    borderColor: '#4CAF50',
+  },
+  rollButtonDisabled: {
+    backgroundColor: '#424242',
+    borderColor: '#616161',
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  rollButtonText: {
+    color: '#FFFFFF',
+    fontSize: 22,
+    fontWeight: '900',
+    letterSpacing: 3,
+  },
+  rollButtonTextDisabled: {
+    color: '#9E9E9E',
   },
 });
 

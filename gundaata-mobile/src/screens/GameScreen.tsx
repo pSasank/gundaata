@@ -23,7 +23,7 @@ import { rollDice as rollDiceLogic } from '../utils/dice';
 const ROLL_ANIMATION_DURATION = 1000;
 const USE_MOCK_ADS = __DEV__;
 
-/** Decorative corner ornament for the background */
+/** Decorative corner ornament */
 function CornerOrnament({ position }: { position: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' }) {
   const isTop = position.includes('top');
   const isLeft = position.includes('Left');
@@ -152,27 +152,28 @@ export function GameScreen() {
         </View>
       </View>
 
-      {/* The Board */}
+      {/* The Board (display + bet placement only) */}
       <View style={styles.boardContainer}>
         <BettingBoard
           bets={bets}
           dice={dice}
           isRolling={isRolling}
-          canRoll={canRoll && !isAnimating}
           lastWin={lastWin}
           winningNumbers={winningNumbers}
           disabled={isRolling}
           onCellPress={handleCellPress}
-          onRoll={handleRoll}
         />
       </View>
 
-      {/* Chip Selector */}
+      {/* Bottom controls: instruction, chips, Roll button */}
       <View style={styles.bottomArea}>
         <ChipSelector
           selectedChip={selectedChip}
           onSelectChip={setSelectedChip}
           onClear={clearBets}
+          onRoll={handleRoll}
+          canRoll={canRoll && !isAnimating}
+          isRolling={isRolling}
           disabled={isRolling}
           totalBet={totalBet}
         />
@@ -245,19 +246,19 @@ const accentStyles = StyleSheet.create({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#4A148C', // Deep purple — festive arena base
+    backgroundColor: '#4A148C',
   },
   header: {
-    paddingTop: 12,
+    paddingTop: 8,
     paddingHorizontal: 16,
-    paddingBottom: 8,
+    paddingBottom: 6,
     zIndex: 1,
   },
   titleContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   titleAccentLeft: {
     width: 30,
@@ -275,7 +276,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#FFD54F',
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: '900',
     textAlign: 'center',
     letterSpacing: 4,
@@ -325,13 +326,13 @@ const styles = StyleSheet.create({
   boardContainer: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     zIndex: 1,
   },
   bottomArea: {
     backgroundColor: 'rgba(0, 0, 0, 0.35)',
-    paddingBottom: 8,
+    paddingBottom: 6,
     zIndex: 1,
   },
 });
