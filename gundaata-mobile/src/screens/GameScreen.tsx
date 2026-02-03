@@ -19,6 +19,7 @@ import { ChipSelector } from '../components/ChipSelector';
 import { GameOverModal } from '../components/GameOverModal';
 import { DiceNumber } from '../utils/betting';
 import { rollDice as rollDiceLogic } from '../utils/dice';
+import { t, formatCurrency } from '../i18n';
 
 const ROLL_ANIMATION_DURATION = 1000;
 const USE_MOCK_ADS = __DEV__;
@@ -132,22 +133,22 @@ export function GameScreen() {
       <View style={styles.header}>
         <View style={styles.titleContainer}>
           <View style={styles.titleAccentLeft} />
-          <Text style={styles.title}>GUNDAATA</Text>
+          <Text style={styles.title}>{t('appTitle')}</Text>
           <View style={styles.titleAccentRight} />
         </View>
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
-            <Text style={styles.statLabel}>CASH</Text>
-            <Text style={styles.cashValue}>${cash.toLocaleString()}</Text>
+            <Text style={styles.statLabel}>{t('cashLabel')}</Text>
+            <Text style={styles.cashValue}>{formatCurrency(cash)}</Text>
           </View>
           {lastWin > 0 && (
             <View style={styles.winBadge}>
-              <Text style={styles.winText}>+${lastWin.toLocaleString()}</Text>
+              <Text style={styles.winText}>+{formatCurrency(lastWin)}</Text>
             </View>
           )}
           <View style={styles.statItem}>
-            <Text style={styles.statLabel}>HIGH SCORE</Text>
-            <Text style={styles.highValue}>${highScore.toLocaleString()}</Text>
+            <Text style={styles.statLabel}>{t('highScoreLabel')}</Text>
+            <Text style={styles.highValue}>{formatCurrency(highScore)}</Text>
           </View>
         </View>
       </View>

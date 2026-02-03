@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { t, formatCurrency, getSkin } from '../i18n';
 
 interface GameOverModalProps {
   visible: boolean;
@@ -13,10 +14,6 @@ interface GameOverModalProps {
   onNewGame: () => void;
   onWatchAd: () => void;
   adAvailable: boolean;
-}
-
-function formatNumber(num: number): string {
-  return num.toLocaleString();
 }
 
 export function GameOverModal({
@@ -37,19 +34,19 @@ export function GameOverModal({
       <View style={styles.overlay}>
         <View style={styles.modal} accessibilityRole="alert">
           {/* Header */}
-          <Text style={styles.title}>Game Over</Text>
+          <Text style={styles.title}>{t('gameOver')}</Text>
 
           {/* New high score celebration */}
           {isNewHighScore && (
             <View style={styles.celebration}>
-              <Text style={styles.celebrationText}>🎉 New High Score! 🎉</Text>
+              <Text style={styles.celebrationText}>{getSkin().celebrationPrefix}{t('newHighScore')}{getSkin().celebrationSuffix}</Text>
             </View>
           )}
 
           {/* High score display */}
           <View style={styles.scoreContainer}>
-            <Text style={styles.scoreLabel}>High Score</Text>
-            <Text style={styles.scoreValue}>${formatNumber(highScore)}</Text>
+            <Text style={styles.scoreLabel}>{t('highScoreModalLabel')}</Text>
+            <Text style={styles.scoreValue}>{formatCurrency(highScore)}</Text>
           </View>
 
           {/* Buttons */}
@@ -59,10 +56,10 @@ export function GameOverModal({
               style={[styles.adButton, !adAvailable && styles.buttonDisabled]}
               onPress={onWatchAd}
               disabled={!adAvailable}
-              accessibilityLabel="Watch advertisement to continue"
+              accessibilityLabel={t('watchAdA11y')}
             >
               <Text style={[styles.adButtonText, !adAvailable && styles.buttonTextDisabled]}>
-                {adAvailable ? '📺 Watch Ad for $500' : 'Ad Not Available'}
+                {adAvailable ? t('watchAdButton', { amount: formatCurrency(500) }) : t('adNotAvailable')}
               </Text>
             </TouchableOpacity>
 
@@ -70,9 +67,9 @@ export function GameOverModal({
             <TouchableOpacity
               style={styles.newGameButton}
               onPress={onNewGame}
-              accessibilityLabel="Start new game"
+              accessibilityLabel={t('newGameA11y')}
             >
-              <Text style={styles.newGameButtonText}>New Game</Text>
+              <Text style={styles.newGameButtonText}>{t('newGameButton')}</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { t, formatCurrency } from '../i18n';
 
 interface ChipSelectorProps {
   selectedChip: number;
@@ -42,10 +43,10 @@ export function ChipSelector({
       {/* Instructional text */}
       <Text style={styles.instruction}>
         {isRolling
-          ? 'Rolling the dice...'
+          ? t('rollingInstruction')
           : totalBet > 0
-            ? `Total bet: $${totalBet.toLocaleString()} — tap numbers to add more`
-            : `Tap a number on the board to bet $${selectedChip}`}
+            ? t('totalBetInstruction', { totalBet: formatCurrency(totalBet) })
+            : t('placeBetInstruction', { chipValue: formatCurrency(selectedChip) })}
       </Text>
 
       {/* Chip row */}
@@ -65,7 +66,7 @@ export function ChipSelector({
               ]}
               onPress={() => onSelectChip(value)}
               disabled={disabled}
-              accessibilityLabel={`Select ${value} chip`}
+              accessibilityLabel={t('selectChipA11y', { value: String(value) })}
               testID={`chip-${value}`}
             >
               <Text
@@ -86,10 +87,10 @@ export function ChipSelector({
           style={[styles.clearButton, (disabled || totalBet === 0) && styles.chipDisabled]}
           onPress={onClear}
           disabled={disabled || totalBet === 0}
-          accessibilityLabel="Clear all bets"
+          accessibilityLabel={t('clearBetsA11y')}
           testID="clear-bets"
         >
-          <Text style={styles.clearText}>Clear</Text>
+          <Text style={styles.clearText}>{t('clearButton')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -99,11 +100,11 @@ export function ChipSelector({
         onPress={onRoll}
         disabled={!canRoll}
         activeOpacity={0.8}
-        accessibilityLabel={isRolling ? 'Dice rolling' : 'Roll the dice'}
+        accessibilityLabel={isRolling ? t('diceRollingA11y') : t('rollDiceA11y')}
         testID="roll-button"
       >
         <Text style={[styles.rollButtonText, !canRoll && styles.rollButtonTextDisabled]}>
-          {isRolling ? 'ROLLING...' : 'ROLL DICE'}
+          {isRolling ? t('rollingButton') : t('rollDiceButton')}
         </Text>
       </TouchableOpacity>
     </View>

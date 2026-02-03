@@ -4,7 +4,8 @@
  */
 
 import React from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { t } from '../i18n';
 
 interface DiceProps {
   value: number | null;
@@ -65,7 +66,7 @@ export function Dice({ value, isRolling = false, isWinner = false, size = 80 }: 
         isWinner && styles.winner,
         isRolling && styles.rolling,
       ]}
-      accessibilityLabel={value ? `Dice showing ${value}` : 'Dice'}
+      accessibilityLabel={value ? t('diceShowingA11y', { value: String(value) }) : t('diceA11y')}
       accessibilityRole="image"
     >
       {renderDots()}

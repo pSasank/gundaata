@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { t, formatCurrency } from '../i18n';
 
 interface CashDisplayProps {
   cash: number;
@@ -12,31 +13,27 @@ interface CashDisplayProps {
   highScore?: number;
 }
 
-function formatNumber(num: number): string {
-  return num.toLocaleString();
-}
-
 export function CashDisplay({ cash, lastWin = 0, highScore = 0 }: CashDisplayProps) {
   return (
     <View style={styles.container}>
       {/* Main cash display */}
       <View style={styles.mainDisplay}>
-        <Text style={styles.label}>CASH</Text>
-        <Text style={styles.amount}>${formatNumber(cash)}</Text>
+        <Text style={styles.label}>{t('cashLabel')}</Text>
+        <Text style={styles.amount}>{formatCurrency(cash)}</Text>
       </View>
 
       {/* Last win indicator */}
       {lastWin > 0 && (
         <View style={styles.winDisplay}>
-          <Text style={styles.winLabel}>WON</Text>
-          <Text style={styles.winAmount}>+${formatNumber(lastWin)}</Text>
+          <Text style={styles.winLabel}>{t('cashLabel')}</Text>
+          <Text style={styles.winAmount}>{t('winAmount', { amount: formatCurrency(lastWin) })}</Text>
         </View>
       )}
 
       {/* High score */}
       <View style={styles.highScoreDisplay}>
-        <Text style={styles.highScoreLabel}>HIGH</Text>
-        <Text style={styles.highScoreAmount}>${formatNumber(highScore)}</Text>
+        <Text style={styles.highScoreLabel}>{t('highScoreLabel')}</Text>
+        <Text style={styles.highScoreAmount}>{formatCurrency(highScore)}</Text>
       </View>
     </View>
   );

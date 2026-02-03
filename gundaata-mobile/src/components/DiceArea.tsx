@@ -9,6 +9,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Dice } from './Dice';
 import { DiceRoll } from '../utils/dice';
+import { t, formatCurrency } from '../i18n';
 
 interface DiceAreaProps {
   dice: DiceRoll | null;
@@ -57,10 +58,10 @@ export function DiceArea({ dice, isRolling, lastWin }: DiceAreaProps) {
           </View>
           {!isRolling && (
             <Text style={[styles.resultText, lastWin > 0 ? styles.winText : styles.loseText]}>
-              {lastWin > 0 ? `+$${lastWin.toLocaleString()}` : 'No luck'}
+              {lastWin > 0 ? t('winAmount', { amount: formatCurrency(lastWin) }) : t('noLuck')}
             </Text>
           )}
-          {isRolling && <Text style={styles.rollingText}>Rolling...</Text>}
+          {isRolling && <Text style={styles.rollingText}>{t('rollingText')}</Text>}
         </>
       ) : (
         <RangoliMotif />

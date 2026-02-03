@@ -8,6 +8,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { DiceNumber } from '../utils/betting';
+import { t } from '../i18n';
 
 interface BetCellProps {
   diceNumber: DiceNumber;
@@ -45,7 +46,7 @@ export function BetCell({
       onPress={() => onPress(diceNumber)}
       disabled={disabled}
       activeOpacity={0.7}
-      accessibilityLabel={`Number ${diceNumber}, bet ${betAmount}`}
+      accessibilityLabel={t('betCellA11y', { number: String(diceNumber), bet: String(betAmount) })}
       testID={`bet-cell-${diceNumber}`}
     >
       {/* Large number */}
